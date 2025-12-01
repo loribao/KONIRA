@@ -70,11 +70,12 @@
       z-index: 0;
       opacity: 0.95;
       filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.22));
-      padding: 0px 0px 1px 0px;
+      margin: 0px 100px 0px 100px;
     }
 
     /* TRACK: o elemento que corre horizontalmente (flex) */
     .tl-track {
+      padding-left: 100px;
       padding-top: 130px;
       position: relative;
       display: flex;
@@ -130,7 +131,7 @@
     .tl-slash {
       color: rgb(var(--accent));
       font-weight: 800;
-      font-size: 40px
+      font-size: 55px
     }
 
     .tl-intro-title {
@@ -257,7 +258,7 @@
       /* wrapper absoluto que posiciona o SVG exatamente como antes */
 .tl-bg-wrap {
   position: absolute;
-  left: 0;
+  left: 100;
   top: 60%;
   transform: translateY(-50%);
   height: 200px;           /* mantém o que você tinha */
@@ -267,7 +268,7 @@
   z-index: 0;
   opacity: 0.95;
   filter: drop-shadow(0 8px 24px rgba(0,0,0,0.22));
-  padding: 0;
+  padding: 0px 100px 0px 100px;
 }
 
 /* a própria imagem dentro do wrapper */
@@ -448,7 +449,7 @@
         if (!Number.isNaN(px) && px > 0) return px;
         const vw = parseFloat(section.dataset.endExtraVw);
         if (!Number.isNaN(vw) && vw > 0) return (vw / 100) * window.innerWidth;
-        return 160; // default
+        return 1600; // default
       }
 
       let tween = null, monitor = null;
