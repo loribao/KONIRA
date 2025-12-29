@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Frame Right — Minimap compacto e responsivo (melhorado)</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index/bloco9/interface-vscode/frame-right.css') }}">
+
+</head>
+
+<body>
+  <div class="right-root" aria-hidden="false">
+    <div class="right-panel" role="region" aria-label="Painel direito com minimapa compacto">
+
+      <div class="code-area">
+        <div class="editor-header">
+          <div class="chrome-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+
+        <div class="code-scroll" id="codeScroll">
+          <!-- conteúdo principal -->
+          <pre class="code" id="codeMain">
+<span class="tok-doctype">&lt;!doctype html&gt;</span>
+<span class="tok-punct">&lt;</span><span class="tok-tag">html</span> <span class="tok-attr">lang</span><span class="tok-punct">=</span><span class="tok-value">"pt-BR"</span><span class="tok-punct">&gt;</span>
+  <span class="tok-punct">&lt;</span><span class="tok-tag">head</span><span class="tok-punct">&gt;</span>
+    <span class="tok-punct">&lt;</span><span class="tok-tag">meta</span> <span class="tok-attr">charset</span><span class="tok-punct">=</span><span class="tok-value">"utf-8"</span><span class="tok-punct">/&gt;</span>
+    <span class="tok-punct">&lt;</span><span class="tok-tag">meta</span> <span class="tok-attr">name</span><span class="tok-punct">=</span><span class="tok-value">"viewport"</span> <span class="tok-attr">content</span><span class="tok-punct">=</span><span class="tok-value">"width=device-width,initial-scale=1"</span><span class="tok-punct">/&gt;</span>
+    <span class="tok-punct">&lt;</span><span class="tok-tag">title</span><span class="tok-punct">&gt;</span><span class="tok-text">Exemplo de Página — Projeto Demo</span><span class="tok-punct">&lt;/</span><span class="tok-tag">title</span><span class="tok-punct">&gt;</span>
+
+    <span class="tok-comment">&lt;!-- Estilos inline simplificados para demo --&gt;</span>
+    <span class="tok-punct">&lt;</span><span class="tok-tag">style</span><span class="tok-punct">&gt;</span>
+
+      <span class="tok-text">nav ul{ display:flex; gap:12px; list-style:none; padding:0; margin:0; }</span>
+    <span class="tok-punct">&lt;/</span><span class="tok-tag">style</span><span class="tok-punct">&gt;</span>
+  <span class="tok-punct">&lt;/</span><span class="tok-tag">head</span><span class="tok-punct">&gt;</span>
+
+  <span class="tok-punct">&lt;</span><span class="tok-tag">body</span><span class="tok-punct">&gt;</span>
+    <span class="tok-punct">&lt;</span><span class="tok-tag">div</span> <span class="tok-attr">class</span><span class="tok-punct">=</span><span class="tok-value">"site"</span><span class="tok-punct">&gt;</span>
+
+      <span class="tok-punct">&lt;</span><span class="tok-tag">header</span> <span class="tok-attr">class</span><span class="tok-punct">=</span><span class="tok-value">"site-header"</span><span class="tok-punct">&gt;</span>
+        <span class="tok-punct">&lt;</span><span class="tok-tag">div</span> <span class="tok-attr">class</span><span class="tok-punct">=</span><span class="tok-value">"branding"</span><span class="tok-punct">&gt;</span>
+          <span class="tok-punct">&lt;</span><span class="tok-tag">h1</span><span class="tok-punct">&gt;</span><span class="tok-text">Projeto Demo</span><span class="tok-punct">&lt;/</span><span class="tok-tag">h1</span><span class="tok-punct">&gt;</span>
+          <span class="tok-punct">&lt;</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span><span class="tok-text">UI simples, responsiva e acessível.</span><span class="tok-punct">&lt;/</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span>
+        <span class="tok-punct">&lt;/</span><span class="tok-tag">div</span><span class="tok-punct">&gt;</span>
+
+        <span class="tok-punct">&lt;</span><span class="tok-tag">nav</span><span class="tok-punct">&gt;</span>
+          <span class="tok-punct">&lt;</span><span class="tok-tag">ul</span><span class="tok-punct">&gt;</span>
+            <span class="tok-punct">&lt;</span><span class="tok-tag">li</span><span class="tok-punct">&gt;</span><span class="tok-text">&lt;a href='#'&gt;Início&lt;/a&gt;</span><span class="tok-punct">&lt;/</span><span class="tok-tag">li</span><span class="tok-punct">&gt;</span>
+            <span class="tok-punct">&lt;</span><span class="tok-tag">li</span><span class="tok-punct">&gt;</span><span class="tok-text">&lt;a href='#services'&gt;Serviços&lt;/a&gt;</span><span class="tok-punct">&lt;/</span><span class="tok-tag">li</span><span class="tok-punct">&gt;</span>
+            <span class="tok-punct">&lt;</span><span class="tok-tag">li</span><span class="tok-punct">&gt;</span><span class="tok-text">&lt;a href='#contact'&gt;Contato&lt;/a&gt;</span><span class="tok-punct">&lt;/</span><span class="tok-tag">li</span><span class="tok-punct">&gt;</span>
+          <span class="tok-punct">&lt;/</span><span class="tok-tag">ul</span><span class="tok-punct">&gt;</span>
+        <span class="tok-punct">&lt;/</span><span class="tok-tag">nav</span><span class="tok-punct">&gt;</span>
+      <span class="tok-punct">&lt;/</span><span class="tok-tag">header</span><span class="tok-punct">&gt;</span>
+
+      <span class="tok-punct">&lt;</span><span class="tok-tag">main</span><span class="tok-punct">&gt;</span>
+
+        <span class="tok-punct">&lt;</span><span class="tok-tag">section</span> <span class="tok-attr">id</span><span class="tok-punct">=</span><span class="tok-value">"hero"</span><span class="tok-punct">&gt;</span>
+          <span class="tok-punct">&lt;</span><span class="tok-tag">h2</span><span class="tok-punct">&gt;</span><span class="tok-text">Design focado em conteúdo</span><span class="tok-punct">&lt;/</span><span class="tok-tag">h2</span><span class="tok-punct">&gt;</span>
+          <span class="tok-punct">&lt;</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span><span class="tok-text">Uma seção inicial com chamada  das funcionalidades principais.</span><span class="tok-punct">&lt;/</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span>
+        <span class="tok-punct">&lt;/</span><span class="tok-tag">section</span><span class="tok-punct">&gt;</span>
+
+        <span class="tok-punct">&lt;</span><span class="tok-tag">section</span> <span class="tok-attr">id</span><span class="tok-punct">=</span><span class="tok-value">"services"</span><span class="tok-punct">&gt;</span>
+          <span class="tok-punct">&lt;</span><span class="tok-tag">h3</span><span class="tok-punct">&gt;</span><span class="tok-text">Serviços</span><span class="tok-punct">&lt;/</span><span class="tok-tag">h3</span><span class="tok-punct">&gt;</span>
+
+          <span class="tok-punct">&lt;</span><span class="tok-tag">div</span> <span class="tok-attr">class</span><span class="tok-punct">=</span><span class="tok-value">"grid"</span><span class="tok-punct">&gt;</span>
+            <span class="tok-punct">&lt;</span><span class="tok-tag">article</span> <span class="tok-attr">class</span><span class="tok-punct">=</span><span class="tok-value">"card"</span><span class="tok-punct">&gt;</span>
+              <span class="tok-punct">&lt;</span><span class="tok-tag">h4</span><span class="tok-punct">&gt;</span><span class="tok-text">Design</span><span class="tok-punct">&lt;/</span><span class="tok-tag">h4</span><span class="tok-punct">&gt;</span>
+              <span class="tok-punct">&lt;</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span><span class="tok-text">Componentes, layout responsivo.</span><span class="tok-punct">&lt;/</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span>
+            <span class="tok-punct">&lt;/</span><span class="tok-tag">article</span><span class="tok-punct">&gt;</span>
+
+            <span class="tok-punct">&lt;</span><span class="tok-tag">article</span> <span class="tok-attr">class</span><span class="tok-punct">=</span><span class="tok-value">"card"</span><span class="tok-punct">&gt;</span>
+              <span class="tok-punct">&lt;</span><span class="tok-tag">h4</span><span class="tok-punct">&gt;</span><span class="tok-text">Desenvolvimento</span><span class="tok-punct">&lt;/</span><span class="tok-tag">h4</span><span class="tok-punct">&gt;</span>
+              <span class="tok-punct">&lt;</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span><span class="tok-text">Páginas performáticas, APIs e integrações.</span><span class="tok-punct">&lt;/</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span>
+            <span class="tok-punct">&lt;/</span><span class="tok-tag">article</span><span class="tok-punct">&gt;</span>
+
+            <span class="tok-punct">&lt;</span><span class="tok-tag">article</span> <span class="tok-attr">class</span><span class="tok-punct">=</span><span class="tok-value">"card"</span><span class="tok-punct">&gt;</span>
+              <span class="tok-punct">&lt;</span><span class="tok-tag">h4</span><span class="tok-punct">&gt;</span><span class="tok-text">Suporte</span><span class="tok-punct">&lt;/</span><span class="tok-tag">h4</span><span class="tok-punct">&gt;</span>
+              <span class="tok-punct">&lt;</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span><span class="tok-text">Monitoramento e melhorias contínuas.</span><span class="tok-punct">&lt;/</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span>
+            <span class="tok-punct">&lt;/</span><span class="tok-tag">article</span><span class="tok-punct">&gt;</span>
+          <span class="tok-punct">&lt;/</span><span class="tok-tag">div</span><span class="tok-punct">&gt;</span>
+        <span class="tok-punct">&lt;/</span><span class="tok-tag">section</span><span class="tok-punct">&gt;</span>
+
+        <span class="tok-punct">&lt;</span><span class="tok-tag">section</span> <span class="tok-attr">id</span><span class="tok-punct">=</span><span class="tok-value">"long"</span><span class="tok-punct">&gt;</span>
+          <span class="tok-punct">&lt;</span><span class="tok-tag">h3</span><span class="tok-punct">&gt;</span><span class="tok-text">Conteúdo longo para demonstração</span><span class="tok-punct">&lt;/</span><span class="tok-tag">h3</span><span class="tok-punct">&gt;</span>
+          <span class="tok-punct">&lt;</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span><span class="tok-text">Lorem ipsum dolor sit amet, diam. Sed  imperdiet.</span><span class="tok-punct">&lt;/</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span>
+
+          <span class="tok-punct">&lt;</span><span class="tok-tag">pre</span> <span class="tok-attr">class</span><span class="tok-punct">=</span><span class="tok-value">"example-code"</span><span class="tok-punct">&gt;</span>
+<span class="tok-comment">/* Exemplo de função para demonstrar linhas de código */</span>
+<span class="tok-keyword">function</span> <span class="tok-fn">greet</span><span class="tok-punct">(</span><span class="tok-attr">name</span><span class="tok-punct">)</span> <span class="tok-punct">&#123;</span>
+  <span class="tok-keyword">return</span> <span class="tok-string">`Olá, ${name}! Bem-vindo ao projeto demo.`</span><span class="tok-punct">;</span>
+<span class="tok-punct">&#125;</span>
+          <span class="tok-punct">&lt;/</span><span class="tok-tag">pre</span><span class="tok-punct">&gt;</span>
+
+          <span class="tok-punct">&lt;</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span><span class="tok-text">Duis sagittis ipsum. Praesentmauris.  .</span><span class="tok-punct">&lt;/</span><span class="tok-tag">p</span><span class="tok-punct">&gt;</span>
+        <span class="tok-punct">&lt;/</span><span class="tok-tag">section</span><span class="tok-punct">&gt;</span>
+      <span class="tok-punct">&lt;/</span><span class="tok-tag">main</span><span class="tok-punct">&gt;</span>
+
+
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bloco 6 — Proposta DevSecOps</title>
+  <style>
+    :root {
+      --bg-section: #0b0b0c;
+      --text-default: #ffffff;
+      --gap: 20px;
+      --radius: 12px;
+
+      --card-w: clamp(200px, 15vw, 320px);
+      --card-h: calc(var(--card-w) * 1.28);
+
+      --diag-duration: 420ms;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg-section);
+      color: var(--text-default);
+    }
+
+    img {
+      border: 0;
+      display: block;
+
+    }
+
+    .bloco6-section {
+      padding: 48px 20px;
+    }
+
+    .bloco6-wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .alinhador-do.titalo-com-os-cards {
+      display: grid;
+      grid-template-columns: repeat(3, var(--card-w));
+      gap: var(--gap);
+      justify-content: center;
+      align-items: start;
+      width: calc(3 * var(--card-w) + 2 * var(--gap));
+      margin: 0 auto 12px auto;
+      max-width: 100%;
+    }
+
+    .intro-text {
+      grid-column: 1 / -1;
+      font-size: clamp(26px, calc(var(--card-w) * 0.07), 26px);
+      line-height: 1.25;
+      margin: 0;
+      color: var(--text-default);
+      font-weight: 600;
+      padding: 0 8px;
+    }
+
+    .intro-text .highlight-tech {
+      color: #F87171;
+    }
+
+    .intro-text .highlight-rev {
+      color: #3B82F6;
+    }
+
+    .stats-wrap {
+      clear: both;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(3, var(--card-w));
+      gap: 18px;
+      justify-content: center;
+      align-items: center;
+      margin: 12px auto 0 auto;
+      width: 100%;
+    }
+
+    /* IMPORTANTE: overflow: visible para evitar corte quando rotacionar */
+    .stat-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border-radius: var(--radius);
+      padding: 0;
+      min-height: var(--card-h);
+      overflow: visible;
+      /* permitimos a imagem sair do limite do bloco quando inclinada */
+    }
+
+    /* wrapper que recebe a rotação/transform — evita clipping e permite transição suave */
+    .card-wrap {
+      display: block;
+      width: 100%;
+      max-width: var(--card-w);
+      transform-origin: center center;
+      will-change: transform;
+      transition: transform var(--diag-duration) cubic-bezier(.2, .9, .2, 1);
+      transform: rotate(0deg) translateY(0);
+    }
+
+    /* classe aplicada no hover/focus para inclinar diagonalmente (agora sempre para a direita por padrão) */
+    .card-wrap.is-diagonal {
+      transform: rotate(var(--diag-angle, 8deg)) translateY(var(--diag-ty, -6px));
+    }
+
+    .card-svg {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 220 / 282;
+      object-fit: contain;
+      display: block;
+      pointer-events: none;
+      /* evita captura do evento pelo img; usamos o article para interação */
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card-wrap {
+        transition: none !important;
+      }
+    }
+
+    /* Responsividade */
+    @media (max-width:1000px) {
+      :root {
+        --card-w: clamp(180px, 28vw, 260px);
+        --card-h: calc(var(--card-w) * 1.28);
+      }
+
+      .alinhador-do.titalo-com-os-cards {
+        grid-template-columns: repeat(2, 1fr);
+        width: 100%;
+        gap: 18px;
+        padding: 0 10px;
+      }
+
+      .intro-text {
+        grid-column: 1 / -1;
+        text-align: center;
+      }
+
+      .stats-grid {
+        grid-column: 1 / -1;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+        padding: 0 0px;
+      }
+
+      .stat-item {
+        min-height: auto;
+        padding: 12px;
+      }
+
+      .card-wrap {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width:640px) {
+      :root {
+        --card-w: calc(100% - 24px);
+        --card-h: auto;
+      }
+
+      .alinhador-do.titalo-com-os-cards {
+        grid-template-columns: 1fr;
+        padding: 0 12px;
+        width: 100%;
+      }
+
+      .intro-text {
+        font-size: 18px;
+        grid-column: 1 / -1;
+        text-align: center;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .stat-item {
+        padding: 8px;
+      }
+
+      .card-wrap {
+        max-width: 100%;
+      }
+    }
+
+    @media (min-width:1400px) {
+      .bloco6-wrap {
+        max-width: 1400px;
+      }
+    }
+
+    .stat-item:focus-within {
+      outline: 2px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius);
+    }
+
+    /* utility: marca cards que não devem inclinar */
+    .no-tilt .card-wrap {
+      transition: none;
+    }
+  </style>
+</head>
+
+<body>
+  <section id="bloco-6" class="bloco6-section" aria-label="Solicitar Proposta DevSecOps">
+    <div class="bloco6-wrap">
+      <div class="stats-wrap" role="list" aria-label="Destaques visuais">
+        <div class="alinhador-do titalo-com-os-cards">
+          <p class="intro-text">Innvation is central to our etheos. We continually explore new <span
+              class="highlight-tech">technologies</span> and strategies to <span
+              class="highlight-rev">revolutionize</span> how people interact with finaces.</p>
+
+          <div class="stats-grid">
+
+            <!-- Card 1: inclina para a direita e possui _over (card_1_over.svg) -->
+            <article class="stat-item" role="listitem" aria-label="Card 1" tabindex="0">
+              <div class="card-wrap" data-angle="8deg" data-ty="-6px" style="--diag-angle: 8deg; --diag-ty: -6px;">
+                <img class="card-svg" src="static/images/corpo/bloco6/card_1.svg" alt="Card 1"
+                  data-over="static/images/corpo/bloco6/card_1_over.svg">
+              </div>
+            </article>
+
+            <!-- Card 2: NÃO inclina (estático) e sem _over -->
+            <article class="stat-item no-tilt" role="listitem" aria-label="Card 2" tabindex="0">
+              <div class="card-wrap" style="--diag-angle: 8deg; --diag-ty: -6px;">
+                <img class="card-svg" src="static/images/corpo/bloco6/card_2.svg" alt="Card 2">
+              </div>
+            </article>
+
+            <!-- Card 3: inclina para a direita e possui _over (card_3_over.svg) -->
+            <article class="stat-item" role="listitem" aria-label="Card 3" tabindex="0">
+              <div class="card-wrap" data-angle="8deg" data-ty="-6px" style="--diag-angle: 8deg; --diag-ty: -6px;">
+                <img class="card-svg" src="static/images/corpo/bloco6/card_3.svg" alt="Card 3"
+                  data-over="static/images/corpo/bloco6/card_3_over.svg">
+              </div>
+            </article>
+
+
+            <article class="stat-item no-tilt" role="listitem" aria-label="Card 4" tabindex="0">
+              <div class="card-wrap" style="--diag-angle: 8deg; --diag-ty: -6px;">
+                <img class="card-svg" src="static/images/corpo/bloco6/card_4.svg" alt="Card 4">
+              </div>
+            </article>
+
+            <!-- Card 5: inclina para a direita, sem _over -->
+            <article class="stat-item" role="listitem" aria-label="Card 5" tabindex="0">
+              <div class="card-wrap" data-angle="8deg" data-ty="-6px" style="--diag-angle: 8deg; --diag-ty: -6px;">
+                <img class="card-svg" src="static/images/corpo/bloco6/card_5.svg" alt="Card 5"
+                    data-over="static/images/corpo/bloco6/card_5_over.svg">
+              </div>
+            </article>
+
+            <!-- Card 6: inclina para a direita e possui _over (card_6_over.svg) -->
+            <article class="stat-item" role="listitem" aria-label="Card 6" tabindex="0">
+              <div class="card-wrap" data-angle="8deg" data-ty="-6px" style="--diag-angle: 8deg; --diag-ty: -6px;">
+                <img class="card-svg" src="static/images/corpo/bloco6/card_6.svg" alt="Card 6"
+                  data-over="static/images/corpo/bloco6/card_6_over.svg">
+              </div>
+            </article>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      // Detecta preferência por redução de movimento
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Seleciona todos os elementos com imagem que tenham data-over (são os que devem trocar de src)
+      const imgsWithOver = Array.from(document.querySelectorAll('img.card-svg[data-over]'));
+
+      // Pré-carrega apenas os arquivos _over referentes aos cards 1,3,4,6
+      imgsWithOver.forEach(img => {
+        const over = img.dataset.over;
+        if (over) {
+          const pre = new Image();
+          pre.src = over;
+        }
+      });
+
+      // Para cada stat-item, vamos:
+      // - controlar swap de imagem se a imagem tiver data-over
+      // - controlar tilt (adicionar/remover is-diagonal) apenas se o artigo NÃO tiver .no-tilt
+      const items = Array.from(document.querySelectorAll('.stat-item'));
+
+      items.forEach(item => {
+        const wrap = item.querySelector('.card-wrap');
+        const img = item.querySelector('img.card-svg');
+        if (!wrap || !img) return;
+
+        // configura variáveis CSS a partir do dataset (fallbacks aplicados)
+        const angle = wrap.dataset.angle || '8deg';
+        const ty = wrap.dataset.ty || '-6px';
+        wrap.style.setProperty('--diag-angle', angle);
+        wrap.style.setProperty('--diag-ty', ty);
+
+        // original src / over src (se existir)
+        const originalSrc = img.getAttribute('src');
+        const overSrc = img.dataset.over || null;
+
+        // função que faz swap de src (se existir over)
+        function swapToOver() {
+          if (overSrc) {
+            // troca imediata
+            img.src = overSrc;
+          }
+        }
+        function revertToOriginal() {
+          if (overSrc) {
+            img.src = originalSrc;
+          }
+        }
+
+        // Controle de inclinação: somente se NÃO houver a classe no-tilt no artigo
+        const isNoTilt = item.classList.contains('no-tilt');
+
+        // Handlers combinados (ativar/desativar tanto swap quanto tilt conforme aplicável)
+        function activate() {
+          swapToOver();
+          if (!isNoTilt) wrap.classList.add('is-diagonal');
+        }
+        function deactivate() {
+          revertToOriginal();
+          if (!isNoTilt) wrap.classList.remove('is-diagonal');
+        }
+
+        // MOUSE events (mouseenter / mouseleave)
+        item.addEventListener('mouseenter', () => activate(), { passive: true });
+        item.addEventListener('mouseleave', () => deactivate(), { passive: true });
+
+        // KEYBOARD / ACCESSIBILITY: focusin / focusout
+        // usamos focusin/focusout para suportar focar elementos internos (se houver)
+        item.addEventListener('focusin', () => activate(), true);
+        item.addEventListener('focusout', () => deactivate(), true);
+
+        // Preferência reduced-motion: remove transição visual mas mantém trocas de imagem e estado final
+        if (reduce) {
+          wrap.style.transition = 'none';
+        }
+      });
+
+      // Pequenas utilitárias para depuração
+      window._bloco6 = {
+        tiltAllOn: function () {
+          document.querySelectorAll('.stat-item:not(.no-tilt) .card-wrap').forEach(w => w.classList.add('is-diagonal'));
+          // swap images for those that have over
+          document.querySelectorAll('img.card-svg[data-over]').forEach(i => i.src = i.dataset.over);
+        },
+        tiltAllOff: function () {
+          document.querySelectorAll('.stat-item .card-wrap').forEach(w => w.classList.remove('is-diagonal'));
+          // revert images
+          document.querySelectorAll('img.card-svg[data-over]').forEach(i => i.src = i.getAttribute('data-original') || i.src);
+        }
+      };
+
+      // Nota: guardamos data-original não é estritamente necessário aqui (já usamos originalSrc closures),
+      // mas deixamos as utilitárias simples. Se quiser, posso adicionar um atributo data-original em runtime
+      // para facilitar manipulação via console — informe se desejar.
+    })();
+  </script>
+</body>
+
+</html>

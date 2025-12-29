@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Solicitar Consultoria DevSecOps — Cursores Animados</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index/corpo8.css') }}">
+
+</head>
+
+<body>
+  <div class="page-center">
+    <section class="hero" id="bloco-5" aria-labelledby="hero-title">
+      <div class="hero-head">
+        <h1 class="title" id="hero-title">
+          <span class="slash">/</span>
+          <span class="main">Solicitar Consultoria DevSecOps</span>
+        </h1>
+        <p class="subtitle">
+          Avaliação completa de práticas, pipeline e segurança
+          <span class="italic">proposta personalizada</span>
+        </p>
+      </div>
+
+      <!-- Botão — mantive sua marcação original (classe .cta); a estilização aplicada acima -->
+      <button class="cta" id="cta-main" role="button" aria-label="Solicitar proposta">
+        <span class="cta-shimmer" aria-hidden="true"></span>
+        <div class="icon" aria-hidden="true">
+          <!-- ajuste src conforme sua infra -->
+          <img src="/static/images/corpo/bloco8/ICON-CTA.svg" alt="">
+        </div>
+        <div class="text">
+          <p class="cta-title">Solicitar</p>
+          <span class="cta-sep" aria-hidden="true"></span>
+          <p class="cta-sub">Proposta</p>
+        </div>
+      </button>
+
+      <!-- seus cursores (mantidos) — ajuste src conforme sua infra -->
+      <img id="cursor1" class="cursor" src="/static/images/corpo/bloco8/CURSOR.svg" alt=""
+        style="left:683px; top:111px; z-index:1;" data-pointer-offset-x="20" data-pointer-offset-y="40"
+        data-visible="true" data-animate="true">
+      <img id="cursor2" class="cursor" src="/static/images/corpo/bloco8/CURSOR.svg" alt=""
+        style="left:760px; top:254px; z-index:2;" data-pointer-offset-x="18" data-pointer-offset-y="38"
+        data-visible="true" data-animate="true">
+      <img id="cursor3" class="cursor" src="/static/images/corpo/bloco8/CURSOR.svg" alt=""
+        style="left:461px; top:162px; z-index:3;" data-pointer-offset-x="20" data-pointer-offset-y="40"
+        data-visible="true" data-animate="true">
+      <img id="cursor4" class="cursor" src="/static/images/corpo/bloco8/CURSOR.svg" alt=""
+        style="left:598px; top:212px; z-index:4;" data-pointer-offset-x="20" data-pointer-offset-y="40"
+        data-visible="true" data-animate="true">
+      <img id="cursor5" class="cursor" src="/static/images/corpo/bloco8/CURSOR.svg" alt=""
+        style="left:491px; top:304px; z-index:5;" data-pointer-offset-x="20" data-pointer-offset-y="40"
+        data-visible="true" data-animate="true">
+      <img id="cursor6" class="cursor" src="/static/images/corpo/bloco8/CURSOR.svg" alt=""
+        style="left:239px; top:188px; z-index:6;" data-pointer-offset-x="20" data-pointer-offset-y="40"
+        data-visible="true" data-animate="true">
+      <img id="cursor7" class="cursor" src="/static/images/corpo/bloco8/CURSOR.svg" alt=""
+        style="left:310px; top:320px; z-index:7;" data-pointer-offset-x="20" data-pointer-offset-y="40"
+        data-visible="true" data-animate="true">
+      <img id="cursor8" class="cursor" src="/static/images/corpo/bloco8/CURSOR.svg" alt=""
+        style="left:130px; top:300px; z-index:8;" data-pointer-offset-x="20" data-pointer-offset-y="40"
+        data-visible="true" data-animate="true">
+    </section>
+  </div>
+
+  <!-- GSAP (mantive como no original) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      /* ====================== ajuste tipográfico dinâmico (mantive seu algoritmo original) ====================== */
+      const titleEl = document.querySelector('.title');
+      const parent = titleEl.parentElement;
+
+      const computedFont = parseFloat(getComputedStyle(titleEl).fontSize);
+      const maxFont = Math.round(computedFont);
+      const minFont = Math.max(14, Math.round(computedFont * 0.9));
+
+      function availableWidth() {
+        const parentWidth = parent.clientWidth;
+        const slashWidth = titleEl.querySelector('.slash').getBoundingClientRect().width;
+        return Math.max(50, parentWidth - slashWidth - 12);
+      }
+
+      function fitsAtSize(sizePx) {
+        titleEl.style.fontSize = sizePx + 'px';
+        return titleEl.scrollWidth <= (availableWidth() + 2);
+      }
+
+      function fitTitle() {
+        titleEl.style.whiteSpace = 'nowrap';
+        let low = minFont;
+        let high = maxFont;
+        let best = minFont;
+        while (low <= high) {
+          const mid = Math.floor((low + high) / 2);
+          if (fitsAtSize(mid)) { best = mid; low = mid + 1; } else { high = mid - 1; }
+        }
+        titleEl.style.fontSize = best + 'px';
+      }
+
+      fitTitle();
+      let rt = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(rt);
+        rt = setTimeout(() => { fitTitle(); }, 100);
+      }, { passive: true });
+
+      /* ====================== reduced-motion handler ====================== */
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('.cursor').forEach(c => {
+          c.style.opacity = '1';
+          c.style.transform = 'rotate(-12deg)';
+        });
+        document.querySelectorAll('.cta').forEach(b => {
+          b.style.transition = 'none';
+          b.style.animation = 'none';
+        });
+      }
+
+      /* ====================== GSAP / ScrollTrigger (cursors) ====================== */
+      if (typeof window.gsap === 'undefined' || typeof window.ScrollTrigger === 'undefined') {
+        document.querySelectorAll('.cursor').forEach(c => c.style.opacity = '1');
+      } else {
+        gsap.registerPlugin(ScrollTrigger);
+      }
+
+      const START_BREAKPOINT_HIDE = 420;
+      const SCROLL_TRIGGER_START = 'top 90%';
+      const ENTRY_BASE_DURATION = 0.7;
+      const ENTRY_BASE_DELAY = 0.2;
+
+      const cursorsParams = {
+        cursor1: { entryDuration: 0.60, entryDelay: 0.10, bobAmp: 6, bobDur: 1.1 },
+        cursor2: { entryDuration: 0.80, entryDelay: 0.25, bobAmp: 10, bobDur: 1.4 },
+        cursor3: { entryDuration: 0.72, entryDelay: 0.18, bobAmp: 8, bobDur: 1.2 },
+        cursor4: { entryDuration: 0.94, entryDelay: 0.12, bobAmp: 7, bobDur: 1.3 },
+        cursor5: { entryDuration: 0.68, entryDelay: 0.30, bobAmp: 9, bobDur: 1.2 },
+        cursor6: { entryDuration: 0.85, entryDelay: 0.05, bobAmp: 5, bobDur: 0.9 },
+        cursor7: { entryDuration: 1.00, entryDelay: 0.22, bobAmp: 12, bobDur: 1.6 },
+        cursor8: { entryDuration: 0.76, entryDelay: 0.15, bobAmp: 11, bobDur: 1.5 }
+      };
+
+      function computeStartX(elem, extra = 0) {
+        const rect = elem.getBoundingClientRect();
+        const distanceRightInside = window.innerWidth - rect.right;
+        const fallbackExtra = Math.max(elem.offsetWidth, 120, Math.round(window.innerWidth * 0.06));
+        return distanceRightInside + fallbackExtra + extra;
+      }
+
+      function initCursorAnimation(el) {
+        const id = el.id;
+        const cfg = cursorsParams[id] || {};
+        const entryDuration = (typeof cfg.entryDuration === 'number') ? cfg.entryDuration : ENTRY_BASE_DURATION;
+        const entryDelay = (typeof cfg.entryDelay === 'number') ? cfg.entryDelay : ENTRY_BASE_DELAY;
+        const bobAmp = cfg.bobAmp || 8;
+        const bobDur = cfg.bobDur || 1.2;
+
+        function play() {
+          const cs = window.getComputedStyle(el);
+          if (cs.display === 'none' || cs.visibility === 'hidden') return;
+          if (window.innerWidth <= START_BREAKPOINT_HIDE) {
+            if (window.gsap) gsap.set(el, { clearProps: 'all', opacity: 1, x: 0, y: 0, display: '' });
+            else { el.style.opacity = '1'; el.style.transform = 'translateX(0)'; }
+            return;
+          }
+          const startX = computeStartX(el, 0);
+          if (el._entryTween) { try { el._entryTween.kill(); } catch (e) { } el._entryTween = null; }
+          if (el._bobTween) { try { el._bobTween.kill(); } catch (e) { } el._bobTween = null; }
+          if (window.gsap) {
+            gsap.set(el, { x: startX, y: 0, opacity: 0, display: '' });
+            el._entryTween = gsap.to(el, {
+              x: 0,
+              opacity: 1,
+              duration: entryDuration,
+              delay: entryDelay,
+              ease: 'power2.out',
+              overwrite: true,
+              onComplete: function () {
+                if (el._bobTween) try { el._bobTween.kill(); } catch (e) { }
+                el._bobTween = gsap.to(el, {
+                  y: `+=${bobAmp}`,
+                  duration: bobDur,
+                  ease: 'sine.inOut',
+                  repeat: -1,
+                  yoyo: true,
+                  delay: 0.35
+                });
+              }
+            });
+          } else {
+            el.style.opacity = '1';
+          }
+          try {
+            ScrollTrigger.create({
+              trigger: document.getElementById('bloco-5'),
+              start: SCROLL_TRIGGER_START,
+              onEnter: () => { if (el._entryTween) el._entryTween.play(); },
+              onRefresh: () => { if (el._entryTween) { try { el._entryTween.invalidate(); } catch (e) { } } },
+              invalidateOnRefresh: true
+            });
+          } catch (e) { }
+        }
+
+        play();
+
+        let rt = null;
+        window.addEventListener('resize', () => {
+          clearTimeout(rt);
+          rt = setTimeout(() => {
+            if (window.innerWidth <= START_BREAKPOINT_HIDE) {
+              if (window.gsap) gsap.set(el, { clearProps: 'all', x: 0, y: 0, opacity: 1, display: '' });
+              else { el.style.opacity = '1'; }
+              if (el._entryTween) { try { el._entryTween.kill(); } catch (e) { } el._entryTween = null; }
+              if (el._bobTween) { try { el._bobTween.kill(); } catch (e) { } el._bobTween = null; }
+              return;
+            }
+            play();
+          }, 100);
+        }, { passive: true });
+      }
+
+      document.querySelectorAll('.cursor').forEach((el) => { initCursorAnimation(el); });
+
+      /* ====================== Interações do botão (.cta) — mesma receita do botão original ====================== */
+      (function setupButtonInteractions() {
+        const btn = document.querySelector('.cta');
+        if (!btn) return;
+
+        // Se GSAP disponível, usaremo-la para animações de pressionar/focus; senão, fallback CSS
+        const useGsap = typeof window.gsap !== 'undefined';
+
+        const down = () => {
+          if (useGsap) gsap.to(btn, { scale: 0.98, duration: 0.06, overwrite: true });
+          else btn.style.transform = 'scale(.98)';
+        };
+        const up = () => {
+          if (useGsap) gsap.to(btn, { scale: 1.02, duration: 0.12, ease: 'power2.out', overwrite: true });
+          else btn.style.transform = 'scale(1.02)';
+        };
+        const leave = () => {
+          if (useGsap) gsap.to(btn, { scale: 1.0, duration: 0.12, overwrite: true });
+          else btn.style.transform = 'scale(1)';
+        };
+        const fIn = () => { if (useGsap) gsap.to(btn, { scale: 1.02, duration: 0.12 }); else btn.style.transform = 'scale(1.02)'; };
+        const fOut = () => { if (useGsap) gsap.to(btn, { scale: 1.0, duration: 0.12 }); else btn.style.transform = 'scale(1)'; };
+
+        // remove listeners antes (defensivo)
+        btn.removeEventListener('mousedown', down);
+        btn.removeEventListener('mouseup', up);
+        btn.removeEventListener('mouseleave', leave);
+        btn.removeEventListener('focus', fIn);
+        btn.removeEventListener('blur', fOut);
+
+        btn.addEventListener('mousedown', down);
+        btn.addEventListener('mouseup', up);
+        btn.addEventListener('mouseleave', leave);
+        btn.addEventListener('focus', fIn);
+        btn.addEventListener('blur', fOut);
+
+        // shimmer control (usa elemento .cta-shimmer existente)
+        btn.addEventListener('mouseenter', () => {
+          const shimmer = btn.querySelector('.cta-shimmer');
+          if (!shimmer) return;
+          shimmer.style.opacity = '0.95';
+          shimmer.style.animation = 'none';
+          // forçar reflow para reiniciar animação
+          void shimmer.offsetWidth;
+          shimmer.style.animation = 'cta-shimmer-move 1s forwards';
+        });
+      })();
+
+      /* ====================== animação contínua do gradiente (breathing) já feita em CSS via keyframes ====================== */
+      /* Não aplicamos aqui um gsap loop sobre background-position para evitar conflito com CSS. */
+
+      /* função pública para reinicializar cursores (mantenho sua API original) */
+      window.__reinitCursores = function () {
+        document.querySelectorAll('.cursor').forEach((el) => {
+          try { if (el._entryTween) { el._entryTween.kill(); el._entryTween = null; } if (el._bobTween) { el._bobTween.kill(); el._bobTween = null; } } catch (e) {}
+        });
+        document.querySelectorAll('.cursor').forEach((el) => initCursorAnimation(el));
+        try { if (ScrollTrigger && ScrollTrigger.refresh) ScrollTrigger.refresh(); } catch (e) {}
+      };
+
+      /* comportamento adicional: se prefers-reduced-motion mudar em runtime, reaplica regras */
+      if (window.matchMedia) {
+        const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const mqHandler = () => {
+          if (mq.matches) {
+            document.querySelectorAll('.cursor').forEach(c => {
+              c.style.opacity = '1';
+              c.style.transform = 'rotate(-12deg)';
+            });
+            document.querySelectorAll('.cta').forEach(b => {
+              b.style.transition = 'none';
+              b.style.animation = 'none';
+            });
+          } else {
+            // restaura comportamento normal (reflow/refresh)
+            document.querySelectorAll('.cta').forEach(b => {
+              b.style.transition = '';
+              b.style.animation = '';
+            });
+            window.__reinitCursores && window.__reinitCursores();
+          }
+        };
+        if ('addEventListener' in mq) mq.addEventListener('change', mqHandler);
+        else if ('addListener' in mq) mq.addListener(mqHandler);
+      }
+    });
+  </script>
+</body>
+
+</html>

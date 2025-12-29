@@ -1,0 +1,337 @@
+{# templates/bloco9/bloco_9.html - versão integrada (sem scrolls internos, horizontal via scroll vertical) #}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index/corpo9.css') }}">
+
+<div class="bloco bloco-9 horizontal-demo" id="bloco-9-demo">
+  <!-- Mensagem local de erro (sem id global) -->
+  <div class="load-error load-error-9" style="display:none;">
+    Erro ao carregar componentes da moldura. Verifique templates/vscode/ e o servidor.
+  </div>
+
+  <!-- Horizontal demo (estrutura mínima, includes server-side) -->
+  <section class="horizontal-section" aria-label="Horizontal demo">
+    <!-- sticky-viewport fica "grudado" na viewport enquanto o usuário navega dentro desta seção.
+         O JS calcula a altura da section para transformar o deslocamento vertical em deslocamento horizontal. -->
+    <div class="sticky-viewport">
+
+      <!-- moldura visual (overlay). Não participa do fluxo de layout do track. -->
+      <div class="frame" aria-hidden="true">
+        <div class="frame-inner">
+          <div id="frame-top-container" class="part frame-top" aria-hidden="false">
+            {% include 'blocos_do_index/bloco9/vscode/frame-top.html' %}
+          </div>
+          <div id="frame-left-container" class="part frame-left" aria-hidden="false">
+            {% include 'blocos_do_index/bloco9/vscode/frame-left.html' %}
+          </div>
+          <div id="frame-right-container" class="part frame-right" aria-hidden="false">
+            {% include 'blocos_do_index/bloco9/vscode/frame-right.html' %}
+          </div>
+          <div id="frame-bottom-container" class="part frame-bottom" aria-hidden="false">
+            {% include 'blocos_do_index/bloco9/vscode/frame-bottom.html' %}
+          </div>
+        </div>
+      </div>
+
+      {# A track fica dentro do sticky-viewport e será movida horizontalmente via transform.
+         Importante: NÃO usar scroll interno; o JS converte scroll vertical da página em translateX. #}
+      <div class="track" id="track" aria-hidden="false" role="group" aria-label="Faixa horizontal de painéis">
+          <div class="panel-content">
+            {% include 'blocos_do_index/bloco9/Panel1.html' %}
+            
+        </div>
+
+     <!--   <div class="panel panel-2" aria-label="Painel 2">
+          <div class="panel-content">
+            {% include 'blocos_do_index/bloco9/Panel2.html' %}
+          </div>
+        </div>-->
+
+        <!-- Adicione mais painéis aqui se necessário -->
+      </div>
+
+    </div> <!-- .sticky-viewport -->
+  </section>
+</div>
+
+{# Script inline: comportamento do demo horizontal (IIFE). #}
+<script>
+/* bloco9-demo-fixed.js
+   Mapeia scroll vertical -> translateX para .track
+   Permite largura fixa configurável: por painel (panel mode) ou largura total da track (track mode).
+   API pública disponível: Bloco9.setPanelWidth(px), Bloco9.setTrackWidth(px), Bloco9.recomputeAll(), Bloco9.init().
+*/
+(function () {
+  'use strict';
+
+  // configuração inicial — altere aqui por padrão
+  var DEFAULT_CONFIG = {
+    mode: 'panel',         // 'panel' = cada .panel recebe panelWidth px
+                           // 'track' = track total terá trackTotalWidth px e painéis dividirão igualmente
+    panelWidth: 2000,      // px — usado quando mode === 'panel'
+    trackTotalWidth: null, // px — usado quando mode === 'track'; se null, ignora
+    debug: false           // true para logs de depuração
+  };
+
+  function dlog() {
+    if (window.__B9_DEBUG__ || Bloco9.config.debug) {
+      var args = Array.prototype.slice.call(arguments);
+      args.unshift('[BLOCO9]');
+      console.log.apply(console, args);
+    }
+  }
+  // variáveis globais do módulo
+  var Bloco9 = window.Bloco9 || {};
+  Bloco9.config = Object.assign({}, DEFAULT_CONFIG);
+  window.Bloco9 = Bloco9;
+  window.__B9_DEBUG__ = !!Bloco9.config.debug;
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(v, b)); }
+
+  // Armazena estado por container para permitir múltiplos blocos na página
+  var instances = new WeakMap();
+
+  function initHorizontalDemo(container) {
+    if (!container) return;
+    var section = container.querySelector('.horizontal-section');
+    var sticky = container.querySelector('.sticky-viewport');
+    var track = container.querySelector('#track') || container.querySelector('.track');
+    if (!section || !sticky || !track) { dlog('section/sticky/track not found for container', container); return; }
+
+    // inicializa estado por container
+    var instance = instances.get(container) || {
+      container: container,
+      section: section,
+      sticky: sticky,
+      track: track,
+      panels: []
+    };
+    instances.set(container, instance);
+
+    // Assegura propriedades básicas de track (defensivo)
+    track.style.display = 'flex';
+    track.style.flexWrap = 'nowrap';
+    track.style.alignItems = 'stretch';
+    track.style.willChange = 'transform';
+    track.style.pointerEvents = 'auto';
+
+    function computeSizes() {
+      instance.panels = Array.from(container.querySelectorAll('.panel'));
+      if (!instance.panels.length) { dlog('no panels found in container', container); return { total: 0, totalTranslateX: 0, vw: window.innerWidth }; }
+      var vw = window.innerWidth;
+      var cfg = Bloco9.config;
+
+      var total = 0;
+      if (cfg.mode === 'panel') {
+        // cada painel recebe largura fixa panelWidth
+        var pw = Number(cfg.panelWidth) || 0;
+        instance.panels.forEach(function (p) {
+          p.style.boxSizing = 'border-box';
+          p.style.flex = '0 0 ' + pw + 'px';
+          p.style.width = pw + 'px';
+          p.style.height = instance.sticky.clientHeight + 'px';
+        });
+        total = instance.panels.length * pw;
+        // zera largura explícita do trackTotalWidth (vamos setar abaixo)
+        track.style.width = total + 'px';
+      } else if (cfg.mode === 'track') {
+        // track terá largura fixa trackTotalWidth; painéis dividem igualmente
+        var tw = Number(cfg.trackTotalWidth) || 0;
+        if (tw <= 0) {
+          dlog('track mode requires trackTotalWidth > 0; falling back to mode=panel with panelWidth', cfg.panelWidth);
+          // fallback para panel mode
+          cfg.mode = 'panel';
+          return computeSizes();
+        }
+        var per = Math.floor(tw / instance.panels.length);
+        instance.panels.forEach(function (p) {
+          p.style.boxSizing = 'border-box';
+          p.style.flex = '0 0 ' + per + 'px';
+          p.style.width = per + 'px';
+          p.style.height = instance.sticky.clientHeight + 'px';
+        });
+        track.style.width = tw + 'px';
+        total = tw;
+      } else {
+        dlog('unknown mode:', cfg.mode, 'falling back to panel mode');
+        cfg.mode = 'panel';
+        return computeSizes();
+      }
+
+      // quanto precisa ser traduzido horizontalmente (excedente do lado direito)
+      var totalTranslateX = Math.max(total - vw, 0);
+
+      // altura da seção = viewportHeight + totalTranslateX (para permitir rolar o necessário)
+      var sectionHeight = window.innerHeight + totalTranslateX;
+      section.style.height = sectionHeight + 'px';
+
+      dlog('computeSizes -> mode:', cfg.mode, 'total:', total, 'totalTranslateX:', totalTranslateX, 'vw:', vw, 'section.height:', section.style.height);
+      // guarda valores no instance para uso no update
+      instance.state = { total: total, totalTranslateX: totalTranslateX, vw: vw, sectionHeight: sectionHeight };
+      return instance.state;
+    }
+
+    function update() {
+      if (!instance.state) { dlog('no state yet — computing sizes'); computeSizes(); }
+      var rect = section.getBoundingClientRect();
+      var sectionTop = window.scrollY + rect.top;
+      var sectionHeight = section.offsetHeight;
+      var viewportHeight = window.innerHeight;
+      var maxScroll = Math.max(sectionHeight - viewportHeight, 0);
+      var scrollY = window.scrollY;
+      var scrollIntoSection = scrollY - sectionTop;
+      var clamped = clamp(scrollIntoSection, 0, maxScroll);
+      var progress = maxScroll > 0 ? (clamped / maxScroll) : 0;
+
+      var translateX = - Math.round(progress * Math.max(instance.state.total - instance.state.vw, 0));
+      track.style.transform = 'translate3d(' + translateX + 'px, 0, 0)';
+    }
+
+    // listeners com rAF
+    var rafId = null;
+    function onScroll() {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(update);
+    }
+
+    function onResize() {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(function () {
+        computeSizes();
+        update();
+      });
+    }
+
+    // remove listeners antigos (se houver)
+    if (instance._onScroll) window.removeEventListener('scroll', instance._onScroll, { passive: true });
+    if (instance._onResize) window.removeEventListener('resize', instance._onResize, { passive: true });
+
+    instance._onScroll = onScroll;
+    instance._onResize = onResize;
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize, { passive: true });
+
+    // evita interferência de wheel (opcional — mantém comportamento nativo)
+    sticky.addEventListener('wheel', function (e) {
+      // Intencionalmente não chamamos preventDefault para não quebrar rolagem nativa.
+    }, { passive: true });
+
+    // inicialização final
+    setTimeout(function () { computeSizes(); update(); }, 60);
+
+    // expõe funções para este instance
+    instance.computeSizes = computeSizes;
+    instance.update = update;
+  }
+
+  function initAll() {
+    document.querySelectorAll('.bloco-9.horizontal-demo').forEach(function (container) {
+      try { initHorizontalDemo(container); } catch (e) { console.error('bloco9 init error', e); }
+    });
+  }
+
+  // API pública para alterar configurações em runtime
+  Bloco9.setPanelWidth = function (px) {
+    px = Number(px) || 0;
+    if (px <= 0) throw new Error('panelWidth must be a positive number');
+    Bloco9.config.panelWidth = px;
+    Bloco9.config.mode = 'panel';
+    recomputeAll();
+  };
+
+  Bloco9.setTrackWidth = function (px) {
+    px = Number(px) || 0;
+    if (px <= 0) throw new Error('trackTotalWidth must be a positive number');
+    Bloco9.config.trackTotalWidth = px;
+    Bloco9.config.mode = 'track';
+    recomputeAll();
+  };
+
+  Bloco9.setMode = function (mode) {
+    if (mode !== 'panel' && mode !== 'track') throw new Error("mode must be 'panel' or 'track'");
+    Bloco9.config.mode = mode;
+    recomputeAll();
+  };
+
+  Bloco9.recomputeAll = recomputeAll;
+  Bloco9.init = function () {
+    // re-run init on new DOM content potentially
+    initAll();
+  };
+
+  function recomputeAll() {
+    document.querySelectorAll('.bloco-9.horizontal-demo').forEach(function (container) {
+      var instance = instances.get(container);
+      if (instance && typeof instance.computeSizes === 'function') {
+        try {
+          instance.computeSizes();
+          instance.update();
+        } catch (e) {
+          console.error('bloco9 recompute error', e);
+        }
+      } else {
+        // se não inicializado ainda, inicializa
+        try { initHorizontalDemo(container); } catch (e) { console.error('bloco9 init error', e); }
+      }
+    });
+  }
+
+  // inicia automaticamente
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
+
+  // expõe objeto global
+  window.Bloco9 = Bloco9;
+
+})();
+
+</script>
+
+
+<script>
+(function () {
+  'use strict';
+
+  // Seleciona o header
+  var header = document.querySelector('header.site-header');
+  if (!header) {
+    console.warn('[BLOCO9] header .site-header não encontrado — nada será ocultado.');
+    return;
+  }
+
+  // Função utilitária para adicionar/remover classe
+  function setHeaderHidden(hidden) {
+    if (hidden) {
+      header.classList.add('site-header--hidden');
+    } else {
+      header.classList.remove('site-header--hidden');
+    }
+  }
+
+  // Cria o observer. threshold baixo para considerar "visível" quando qualquer parte entra.
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      // entry.isIntersecting === true quando alguma parte do elemento está na viewport
+      setHeaderHidden(entry.isIntersecting);
+    });
+  }, {
+    root: null,
+    threshold: 0.01
+  });
+
+  // Observa todos os blocos-9 (caso haja mais de um)
+  document.querySelectorAll('.bloco-9').forEach(function (el) {
+    observer.observe(el);
+  });
+
+  // Opcional: expor controle global (útil para debug ou integração com Bloco9 API)
+  window.Bloco9 = window.Bloco9 || {};
+  window.Bloco9._headerVisibilityObserver = {
+    observer: observer,
+    setHidden: setHeaderHidden
+  };
+
+})();
+</script>

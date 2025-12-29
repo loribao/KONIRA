@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Konira - DevSecOps</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/background.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/site-header.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index/corpo.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index/corpo2.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index/corpo3.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index/corpo4.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index/corpo5.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index/corpo7.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index/corpo8.css') }}">
+
+  <!-- CSS de ajuste para overlay e responsividade (evita "duas camadas") -->
+  <style>
+    :root { --site-header-height: 0px; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      position: relative;
+      background-image: url("{{ url_for('static', filename='images/background.svg') }}");
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: top center;
+      background-size: min(100%, 1200px) auto;
+    }
+
+    /* overlay único (substitui background-color semi-transparente no body) */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgb(8, 8, 8); /* ajuste a opacidade conforme quiser */
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header" role="banner">
+    <div class="sh-inner">
+      <div class="sh-cont sh-left">
+        <a href="/" class="logo-link">
+          <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo do site" class="site-logo">
+        </a>
+      </div>
+
+      <nav class="sh-cont sh-center" role="navigation" aria-label="Menu principal">
+        <ul class="nav">
+          <li><a href="#home" class="nav-link" data-key="home">Home</a></li>
+          <li><a href="#sobre" class="nav-link" data-key="sobre">Sobre nós</a></li>
+          <li><a href="#servicos" class="nav-link" data-key="servicos">Serviços</a></li>
+          <li><a href="#contatos" class="nav-link" data-key="contatos">Contatos</a></li>
+        </ul>
+      </nav>
+
+      <div class="sh-cont sh-right">
+        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="github-btn" aria-label="GitHub">
+          <img src="{{ url_for('static', filename='images/github.svg') }}" alt="GitHub" class="github-logo">
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container produto-page">
+    <section class="blocos-area" aria-live="polite">
+      {# Inclusão server-side dos blocos (recomendado). Coloque os arquivos bloco_1.html ... bloco_5.html em templates/. #}
+      {% include 'blocos_do_index/bloco_1.html' %}
+      {% include 'blocos_do_index/bloco_2.html' %}
+      {% include 'blocos_do_index/bloco_3.html' %}
+      {% include 'blocos_do_index/bloco_4.html' %}
+      {% include 'blocos_do_index/bloco_5.html' %}
+      {% include 'blocos_do_index/bloco_6.html' %}
+      {% include 'blocos_do_index/bloco_7.html' %}
+      {% include 'blocos_do_index/bloco_8.html' %}
+      {% include 'blocos_do_index/bloco_9.html' %}
+      {% include 'blocos_do_index/bloco_10.html' %}
+      {% include 'blocos_do_index/bloco_11.html' %}
+
+      
+      {# Se preferir carregar por JS, remova as linhas acima e deixe a section vazia; o script de carregamento fará o trabalho. #}
+    </section>
+  </main>
+
+  <!--
+    SCRIPTS (ordem correta):
+    1) GSAP (core)
+    2) ScrollTrigger (plugin)
+    3) pequeno script inline registra o plugin (garante disponibilidade)
+    4) seus scripts que dependem de GSAP (defer)
+    OBS: Não inclua GSAP/ScrollTrigger novamente em outros arquivos.
+  -->
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" integrity="" crossorigin="anonymous"></script>
+
+
+
+  <!-- 3) Registra plugin logo após o carregamento (será executado depois, por causa do defer) -->
+  <script defer>
+    (function registerGSAP() {
+      // aguarda DOM e checa existência das libs
+      function tryRegister() {
+        if (window.gsap && window.ScrollTrigger && typeof gsap.registerPlugin === 'function') {
+          try { gsap.registerPlugin(ScrollTrigger); } catch (e) { /* silencioso */ }
+        } else {
+          // se ainda não estiver pronto, tenta novamente em 50ms (máx 40 tentativas)
+          registerAttempts = (registerAttempts || 0) + 1;
+          if (registerAttempts < 40) setTimeout(tryRegister, 50);
+        }
+      }
+      let registerAttempts = 0;
+      tryRegister();
+    })();
+  </script>
+
+  <!-- 4) Scripts do site (defer): coloque aqui todos os seus scripts que dependem de GSAP -->
+  <!-- Carregue site-header.js também aqui caso ele dependa de GSAP; caso contrário, você pode colocá-lo no <head> com defer -->
+  <script src="{{ url_for('static', filename='js/site-header.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/timeline-autoscroll.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/gsap-animations.js') }}" defer></script>
+
+  <!-- OPTIONAL: script que carrega blocos via JS caso a seção esteja vazia (mantive seu loader original) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.querySelector('.blocos-area');
+      if (!container) return;
+
+      // se já existe conteúdo (server-side includes), não faz nada
+      if (container.children.length > 0) return;
+
+      const blocks = [
+        'bloco_1.html','bloco_2.html','bloco_3.html','bloco_4.html',
+        'bloco_5.html','bloco_6.html','bloco_7.html','bloco_8.html',
+      ];
+
+      const candidatePathsFor = (name) => [
+        `/static/partials/${name}`,
+        `/partials/${name}`,
+        `/partials/${name.replace(/\.html$/, '')}`
+      ];
+
+      async function fetchFirstAvailable(candidates) {
+        for (const url of candidates) {
+          try {
+            const resp = await fetch(url, { cache: 'no-cache' });
+            if (resp.ok) return { text: await resp.text(), url };
+          } catch (e) {}
+        }
+        return null;
+      }
+
+      async function fetchAndInsert(name, index) {
+        const found = await fetchFirstAvailable(candidatePathsFor(name));
+        if (!found) {
+          const errDiv = document.createElement('div');
+          errDiv.className = 'bloco bloco-error';
+          errDiv.textContent = `Conteúdo indisponível: ${name}`;
+          container.appendChild(errDiv);
+          console.warn('Nenhum partial encontrado para', name);
+          return;
+        }
+
+        const { text, url } = found;
+        const template = document.createElement('template');
+        template.innerHTML = text.trim();
+
+        let fragment = template.content.querySelector('.bloco-fragment')
+                    || template.content.querySelector('main')
+                    || template.content.querySelector('body')
+                    || template.content.querySelector('#content')
+                    || null;
+
+        const contentToInsert = fragment ? fragment.cloneNode(true) : template.content.cloneNode(true);
+        const wrapper = document.createElement('div');
+        wrapper.className = `bloco bloco-${index + 1}`;
+        wrapper.setAttribute('data-src', url);
+        wrapper.appendChild(contentToInsert);
+        container.appendChild(wrapper);
+
+        wrapper.querySelectorAll('img').forEach(img => {
+          img.style.maxWidth = '100%';
+          img.style.height = 'auto';
+          img.decoding = 'async';
+        });
+      }
+
+      (async function loadAllBlocks() {
+        for (let i = 0; i < blocks.length; i++) {
+          await fetchAndInsert(blocks[i], i);
+        }
+      })();
+    });
+  </script>
+</body>
+</html>

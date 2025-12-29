@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Agendar Diagnóstico - Hero</title>
+
+  <!-- Fonte: trocar/retirar se preferir -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ==========================
+     Variáveis e reset básico
+     ========================== */
+  :root{
+    --pj-bg: rgba(80,80,80,0.17);
+    --pj-accent-1: #dd2828;
+    --pj-accent-2: #9e1515;
+    --pj-foreground: #0a0e1e;
+    --pj-white: #ffffff;
+    --pj-radius: 72px;
+    --pj-max-width: 1100px;
+    --pj-gap: 1.25rem;
+    --pj-safe-pad: 1rem;
+    --pj-font-sans: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+
+    /* Controles fáceis para os SVGs de background do bloco 10 */
+    --grade-opacity: 0.6;   /* opacidade do grade.svg (0 a 1) */
+    --luz-opacity: 0.4;     /* opacidade do luz.svg (0 a 1) */
+    --luz-size: 60%;         /* tamanho do luz.svg (valor válido para background-size, ex: "60%", "480px", "contain") */
+  }
+
+  /* small reset */
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:var(--pj-font-sans);
+    background: #0f1724;
+    color:var(--pj-white);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.3;
+  }
+
+  /* ==========================
+     Container principal (hero) - BLOCO 10
+     ========================== */
+  .pj-agendamento-hero-frame{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 45vh 10vh;
+    width:100%;
+    min-height: clamp(360px, 45vh, 720px);
+
+    /* importante para posicionar os SVGs de background */
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 
+    SVG de grade (preenche todo o bloco)
+    - caminho: static/images/corpo/bloco10/grade.svg
+    - opacidade controlada por --grade-opacity
+  */
+  .pj-agendamento-hero-frame::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("static/images/corpo/bloco10/grade.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover; /* cover para preencher o bloco; troque para 'contain' se preferir */
+    opacity: var(--grade-opacity);
+    pointer-events: none;
+    transform-origin: center;
+    will-change: transform, opacity;
+    z-index: 0; /* atrás da luz.svg e do conteúdo */
+  }
+
+  /*
+    SVG de luz (centralizado)
+    - caminho: static/images/corpo/bloco10/luz.svg
+    - tamanho controlado por --luz-size (ex.: "60%", "480px", "contain")
+    - opacidade controlada por --luz-opacity
+    - ficará acima do grade.svg (::before) e atrás do conteúdo (.pj-agendamento-hero-inner)
+  */
+  .pj-agendamento-hero-frame::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    display: block;
+    background-image: url("static/images/corpo/bloco10/luz.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: var(--luz-size);
+    opacity: var(--luz-opacity);
+    pointer-events: none;
+    transform-origin: center;
+    will-change: transform, opacity;
+    z-index: 1; /* acima do grade, mas abaixo do conteúdo do bloco */
+    filter: none; /* se quiser um blur suave, troque/adicione: filter: blur(6px); */
+  }
+
+  /* garante que o conteúdo fique acima dos SVGs */
+  .pj-agendamento-hero-inner{
+    position: relative;
+    z-index: 2;
+    width:100%;
+    max-width:var(--pj-max-width);
+    display:flex;
+    flex-direction:column;
+    gap: clamp(0.75rem, 1.8vw, 2.25rem);
+    align-items:center;
+    text-align:center;
+    padding: clamp(1rem, 2.5vw, 2.5rem);
+  }
+
+  /* ==========================
+     Texto principal (título + descrição)
+     ========================== */
+  .pj-agendamento-hero-title{
+    margin:0;
+    font-weight:700;
+    font-size: clamp(1.5rem, 4.4vw, 3rem);
+    line-height:1.05;
+    color: transparent;
+    letter-spacing:0;
+  }
+
+  .pj-accent-slash{ color: var(--pj-accent-1); }
+  .pj-title-main{ color: var(--pj-white); }
+
+  .pj-agendamento-hero-desc{
+    margin:0;
+    max-width: 58ch;
+    font-size: clamp(0.95rem, 1.8vw, 1.125rem);
+    color: var(--pj-white);
+    opacity:0.95;
+  }
+
+  /* ==========================
+     CTA (botão) + cartão por trás
+     ========================== */
+  .pj-agendamento-cta-wrap{
+    position:relative;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding-top:0;
+  }
+
+  /* ==========================
+     Animações compartilhadas
+     ========================== */
+  @keyframes cta-breathe {
+    0%   { background-position: 100% 50%; }
+    50%  { background-position: 92% 50%; }
+    100% { background-position: 100% 50%; }
+  }
+
+  @keyframes cta-shimmer-move {
+    0% {
+      transform: skewX(-20deg) translateX(-0%);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.75;
+    }
+    60% {
+      transform: skewX(-20deg) translateX(400%);
+      opacity: 0.75;
+    }
+    100% {
+      transform: skewX(-20deg) translateX(600%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes move-background {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(-6%); }
+    100% { transform: translateX(0); }
+  }
+
+  /* ===========================
+     Cartão decorativo (fundo do CTA)
+     - shimmer AQUI (::after). cartão recorta o reflexo com overflow:hidden
+     =========================== */
+  .pj-agendamento-cta-bg{
+    position:absolute;
+    inset:0;
+    display:block;
+    margin:auto;
+    width: min(92%, 820px);
+    height: calc(clamp(72px, 10vw, 120px));
+    border-radius: var(--pj-radius);
+    background-color: #FE2B2B;
+    background-image: linear-gradient(90deg, #FE2B2B 0%, #FE2B2B 30%, #FF8A8A 50%, #FE2B2B 70%, #FE2B2B 100%);
+    background-repeat: no-repeat;
+    background-size: 300% 100%;
+    background-position: 100% 50%;
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.35));
+    transition: transform .12s cubic-bezier(.2,.9,.3,1), box-shadow .12s cubic-bezier(.2,.9,.3,1), background-position .9s cubic-bezier(.2,.9,.3,1);
+    will-change: transform, box-shadow, background-position;
+    animation: cta-breathe 6s ease-in-out infinite;
+    isolation:isolate;
+
+    /* recorta o reflexo dentro do cartão */
+    overflow: hidden;
+
+    /* não impedir clique no botão */
+    pointer-events: none;
+
+    z-index: 1; /* atrás do botão, mas dentro do contexto .pj-agendamento-hero-inner */
+  }
+
+  /* elevação e mudança de posição do cartão ao hover/focus no wrapper */
+  .pj-agendamento-cta-wrap:hover .pj-agendamento-cta-bg,
+  .pj-agendamento-cta-wrap:focus-within .pj-agendamento-cta-bg {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 36px rgba(239, 68, 68, 0.28);
+    background-position: 0% 50%;
+  }
+
+  .pj-agendamento-cta-wrap:focus-within .pj-agendamento-cta-bg {
+    outline: 3px solid rgba(248,113,113,0.22);
+    outline-offset:4px;
+    border-radius: calc(var(--pj-radius) / 1.6);
+  }
+
+  /* background decorativo (SVG + blur) atrás do cartão - cria um brilho suave */
+  .pj-agendamento-cta-bg::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none"%3E%3Cpath fill="%23FF8A8A" d="M0,50 Q25,60 50,50 Q75,40 100,50 Q75,60 50,70 Q25,80 0,70 Z"%3E%3C/path%3E%3C/svg%3E') no-repeat center center;
+    background-size: cover;
+    filter: blur(40px);
+    z-index: -1;
+    transform-origin: center;
+    will-change: transform;
+    animation: move-background 6s linear infinite;
+    opacity: 0.95;
+    pointer-events: none;
+  }
+
+  /* shimmer/reflexo aplicado APENAS ao cartão decorativo (entre fundo e botão) */
+  .pj-agendamento-cta-bg::after {
+    content: "";
+    position: absolute;
+    top: -10%;
+    left: -60%;
+    width: 40%;
+    height: 120%;
+    transform: skewX(-20deg) translateX(0);
+    background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02));
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1; /* acima do fundo do cartão, abaixo do botão (botão z-index:3) */
+    will-change: transform, opacity;
+    mix-blend-mode: screen;
+  }
+
+  /* dispara o shimmer no hover/focus do wrapper - o cartão contém o efeito */
+  .pj-agendamento-cta-wrap:hover .pj-agendamento-cta-bg::after,
+  .pj-agendamento-cta-wrap:focus-within .pj-agendamento-cta-bg::after {
+    animation: cta-shimmer-move 1.2s cubic-bezier(.2,.9,.3,1) forwards;
+    opacity: 0.9;
+  }
+
+  /* ===========================
+     Botão real (anchor) — sem shimmer interno
+     - garante que botão esteja acima do shimmer
+     =========================== */
+  .pj-agendamento-cta{
+    position:relative;
+    z-index:3; /* acima do shimmer (z-index:1) */
+    display:inline-flex;
+    align-items:center;
+    gap:1rem;
+    padding: clamp(0.6rem, 1.6vw, 1.1rem) clamp(1rem, 3.2vw, 2rem);
+    border-radius: calc(var(--pj-radius) / 1.6);
+    background: transparent;
+    border:0;
+    cursor:pointer;
+    text-decoration:none;
+    color: var(--pj-foreground);
+    font-weight:700;
+    font-size: clamp(1rem, 2.4vw, 1.75rem);
+    line-height:1;
+    box-shadow: none;
+    transition: transform .12s cubic-bezier(.2,.9,.3,1), box-shadow .12s cubic-bezier(.2,.9,.3,1), color .12s ease;
+    will-change: transform, box-shadow;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    min-width: 220px;
+    justify-content:center;
+
+    /* remover clipping no botão — efeito é no cartão */
+    overflow: visible;
+  }
+
+  /* hover / foco do botão (pequena elevação e ênfase) */
+  .pj-agendamento-cta:hover,
+  .pj-agendamento-cta:focus-visible {
+    transform: translateY(-4px);
+
+  }
+
+  .pj-agendamento-cta:active {
+    transform: translateY(2px) scale(.998);
+  }
+
+  .pj-agendamento-cta-icon{
+    width:44px;
+    height:44px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 44px;
+  }
+
+  .pj-agendamento-cta-text{
+    display:inline-block;
+    text-align:left;
+    white-space:nowrap;
+  }
+
+  .pj-agendamento-cta-text .pj-cta-strong{ font-weight:700; display:inline-block; }
+  .pj-agendamento-cta-text .pj-cta-regular{ font-weight:400; display:inline-block; margin-left:0.35ch; }
+
+  .textos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  /* ==========================
+     Layouts para telas menores
+     ========================== */
+  @media (max-width: 900px){
+    .pj-agendamento-hero-inner{
+      padding: clamp(1rem, 4vw, 2rem);
+    }
+
+    .pj-agendamento-cta-bg{
+      width: min(96%, 720px);
+      height: calc(clamp(64px, 12vw, 96px));
+    }
+
+    .pj-agendamento-cta{ min-width: 200px; }
+
+    /* exemplo de ajuste automático do tamanho do vetor central (luz) em telas menores */
+    .pj-agendamento-hero-frame{
+      --luz-size: 80%;
+      --luz-opacity: 1;
+    }
+  }
+
+  @media (max-width: 520px){
+    .pj-agendamento-hero-inner{ gap: 1rem; }
+    .pj-agendamento-hero-title{ font-size: clamp(1.25rem, 6.5vw, 1.8rem); }
+    .pj-agendamento-hero-desc{ font-size: 0.95rem; padding-inline:0.5rem; }
+    .pj-agendamento-cta{
+      flex-wrap:nowrap;
+      padding: .6rem 1rem;
+      min-width: 160px;
+      font-size: 1rem;
+    }
+    .pj-agendamento-cta-icon{ width:36px; height:36px; flex:0 0 36px; }
+
+    /* ajuste móvel opcional para luz */
+    .pj-agendamento-hero-frame{
+      --luz-size: 90%;
+      --luz-opacity: 0.14;
+    }
+  }
+
+  /* garante bom contraste do texto dentro do cartão decorativo se precisar */
+  .pj-agendamento-cta-bg[aria-hidden="true"] + .pj-agendamento-cta { color: var(--pj-foreground); }
+</style>
+
+</head>
+<body>
+  <main class="pj-agendamento-hero-frame" role="region" aria-label="Seção principal - Agendar diagnóstico gratuito">
+    <div class="pj-agendamento-hero-inner">
+      <div class="textos">
+        <!-- Título com slash colorido e texto principal -->
+        <h1 class="pj-agendamento-hero-title">
+          <span class="pj-accent-slash">/</span>
+          <span class="pj-title-main">Agendar Diagnóstico Gratuito</span>
+        </h1>
+
+        <!-- Descrição curta -->
+        <p class="pj-agendamento-hero-desc">
+          Revisão de código, infraestrutura e binários para identificar riscos reais e priorizar correções.
+        </p>
+      </div>
+
+      <!-- CTA com cartão de fundo e ícone -->
+      <div class="pj-agendamento-cta-wrap">
+        <!-- Cartão decorativo atrás do botão -->
+        <span class="pj-agendamento-cta-bg" aria-hidden="true"></span>
+
+        <!-- Botão real -->
+        <a class="pj-agendamento-cta" href="#contato" role="button" aria-label="Solicitar Diagnóstico Gratuito">
+          <span class="pj-agendamento-cta-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+              <path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+
+          <span class="pj-agendamento-cta-text">
+            <span class="pj-cta-strong">Solicitar</span>
+            <span class="pj-cta-regular">Diagnóstico</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Exemplo de âncora destino; remova/alterar conforme sua página -->
+  <section id="contato" style="padding:2rem; color:#fff;">
+    <!-- Conteúdo do formulário ou link de contato aqui -->
+  </section>
+
+</body>
+</html>

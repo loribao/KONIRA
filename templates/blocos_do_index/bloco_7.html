@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Konira - /Stacks</title>
+    <link rel="stylesheet" href="static/css/index/corpo7.css" />
+  </head>
+  <body>
+    <main class="app">
+      <div class="window" role="application" aria-label="Janela de arquivos Konira">
+        <!-- Header / Title bar -->
+        <header class="titlebar" role="banner">
+          <div class="titlebar-left">
+            <img class="brand-k" src="static/images/corpo/bloco7/k.svg" alt="Konira" />
+            <div class="titlegroup" role="tablist" aria-label="Guia atual">
+              <div class="folder-icon" aria-hidden="true">
+                <img src="static/images/corpo/bloco7/pasta_icon.svg" alt="" />
+              </div>
+              <h1 class="title-windows">Stacks de Atuação</h1>
+
+              <button class="btn icon-btn-meno" aria-label="Minimizar" title="Minimizar">
+                <img src="static/images/corpo/bloco7/x-meno.svg" alt="" />
+              </button>
+            </div>
+          </div>
+
+          <div class="titlebar-actions">
+            <button class="btn icon-btn" aria-label="Fechar" title="Fechar">
+              <img src="static/images/corpo/bloco7/x-maio.svg" alt="" />
+            </button>
+          </div>
+        </header>
+
+        <!-- Subheader / toolbar -->
+        <div class="toolbar" role="toolbar" aria-label="Barra de ferramentas">
+          <div class="toolbar-left">
+            <div class="nav-controls" role="group" aria-label="Navegação">
+              <button class="btn icon-btn" aria-label="Voltar" title="Voltar">
+                <img src="static/images/corpo/bloco7/pra-la.svg" alt="" />
+              </button>
+              <button class="btn icon-btn" aria-label="Avançar" title="Avançar">
+                <img src="static/images/corpo/bloco7/pra-ca.svg" alt="" />
+              </button>
+              <button class="btn icon-btn" aria-label="Subir nível" title="Subir nível">
+                <img src="static/images/corpo/bloco7/arriba.svg" alt="" />
+              </button>
+              <button class="btn icon-btn" aria-label="Atualizar" title="Atualizar">
+                <img src="static/images/corpo/bloco7/pirueta.svg" alt="" />
+              </button>
+            </div>
+
+            <div class="crumb">
+              <img class="crumb-k" src="static/images/corpo/bloco7/k-do-konira.svg" alt="Konira" />
+              <a href="#" class="crumb-link">Konira</a>
+              <span class="crumb-sep" aria-hidden="true">›</span>
+              <span class="crumb-current">Segurança &amp; Pentest</span>
+            </div>
+          </div>
+
+          <div class="toolbar-right">
+            <div class="search">
+              <label for="search-input" class="visually-hidden">Pesquisar</label>
+              <input id="search-input" class="search-input" type="search" placeholder="Pesquisar" />
+              <button class="btn icon-btn" aria-label="Pesquisar">
+                <img src="static/images/corpo/bloco7/lupa.svg" alt="" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main content area -->
+        <div class="content-window">
+          <!-- Sidebar com pastas empilhadas -->
+          <aside class="sidebar" aria-label="Barra lateral de pastas">
+            <nav class="sidebar-nav" aria-label="Pastas principais">
+              <ul class="folder-list" role="list">
+                <!-- Exemplo de 8 pastas; duplique/remova conforme necessário -->
+                <li role="listitem" class="folder-item">
+                  <button class="folder-btn" aria-pressed="true" title="Pasta Início"> 
+                    <img src="static/images/corpo/bloco7/pasta.svg" alt="Pasta Início" />
+                  </button>
+                </li>
+                <li role="listitem" class="folder-item">
+                  <button class="folder-btn" aria-pressed="false" title="Projetos">
+                    <img src="static/images/corpo/bloco7/pasta.svg" alt="Pasta Projetos" />
+                  </button>
+                </li>
+                <li role="listitem" class="folder-item">
+                  <button class="folder-btn" aria-pressed="false" title="Documentos">
+                    <img src="static/images/corpo/bloco7/pasta.svg" alt="Pasta Documentos" />
+                  </button>
+                </li>
+                <li role="listitem" class="folder-item">
+                  <button class="folder-btn" aria-pressed="false" title="Imagens">
+                    <img src="static/images/corpo/bloco7/pasta.svg" alt="Pasta Imagens" />
+                  </button>
+                </li>
+                <li role="listitem" class="folder-item">
+                  <button class="folder-btn" aria-pressed="false" title="Backup">
+                    <img src="static/images/corpo/bloco7/pasta.svg" alt="Pasta Backup" />
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </aside>
+
+          <!-- Área principal com grid de arquivos -->
+          <section class="file-area" aria-label="Arquivos">
+            
+
+            <div class="title-stack">
+            <span class="title-slash" aria-hidden="true">/</span>
+            <h2 class="title-text">Stacks</h2>
+            </div>
+
+
+
+            <div class="file-grid" role="list">
+                
+              <article class="file-item" role="listitem">
+                <img class="file-icon" src="static/images/corpo/bloco7/arq-rust.svg" alt="Arquivo Rust" />
+                <p class="file-label"><span class="file-name-strong">Rust</span><span class="file-ext">.rs</span></p>
+              </article>
+
+              <article class="file-item" role="listitem">
+                <img class="file-icon" src="static/images/corpo/bloco7/arq-c.svg" alt="Arquivo C#" />
+                <p class="file-label"><span class="file-name-strong">C#</span><span class="file-ext">.cs</span></p>
+              </article>
+
+              <article class="file-item" role="listitem">
+                <img class="file-icon" src="static/images/corpo/bloco7/arq-python.svg" alt="Arquivo Python" />
+                <p class="file-label"><span class="file-name-strong">Python</span><span class="file-ext">.py</span></p>
+              </article>
+
+              <article class="file-item" role="listitem">
+                <img class="file-icon" src="static/images/corpo/bloco7/arq-js.svg" alt="Arquivo JavaScript" />
+                <p class="file-label"><span class="file-name-strong">JavaScript</span><span class="file-ext">.js</span></p>
+              </article>
+
+              <article class="file-item" role="listitem">
+                <img class="file-icon" src="static/images/corpo/bloco7/arq-cc.svg" alt="Arquivo C++" />
+                <p class="file-label"><span class="file-name-strong">C++</span><span class="file-ext">.cpp</span></p>
+              </article>
+
+              <article class="file-item" role="listitem">
+                <img class="file-icon" src="static/images/corpo/bloco7/arq-sql.svg" alt="Arquivo SQL" />
+                <p class="file-label"><span class="file-name-strong">SQL</span><span class="file-ext">.db</span></p>
+              </article>
+
+              <article class="file-item" role="listitem">
+                <img class="file-icon" src="static/images/corpo/bloco7/arq-bash.svg" alt="Arquivo Bash" />
+                <p class="file-label"><span class="file-name-strong">Bash</span><span class="file-ext">.sh</span></p>
+              </article>
+
+              <article class="file-item" role="listitem">
+                <img class="file-icon" src="static/images/corpo/bloco7/arq-asm.svg" alt="Arquivo Assembly" />
+                <p class="file-label"><span class="file-name-strong">x86 Assembly</span><span class="file-ext">.asm</span></p>
+              </article>
+            </div>
+          </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="statusbar" role="contentinfo">
+          <div class="status-left">18 itens</div>
+          <div class="status-right">Última atualização: <time datetime="">—</time></div>
+        </footer>
+      </div>
+    </main>
+
+    <!-- Script: comportamento da sidebar + ocultar 2 folder-items no breakpoint médio
+         + alteração de src das file-icons ao passar o mouse (append "-over" antes da extensão) -->
+    <script>
+      (function () {
+        // ---------- Acessibilidade dos botões de pasta (comportamento clicável/teclado) ----------
+        const folderBtns = document.querySelectorAll('.folder-btn');
+        folderBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            folderBtns.forEach(b => {
+              b.setAttribute('aria-pressed', 'false');
+              b.classList.remove('active');
+            });
+            btn.setAttribute('aria-pressed', 'true');
+            btn.classList.add('active');
+          });
+
+          // permitir teclado Enter/Space
+          btn.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+              e.preventDefault();
+              btn.click();
+            }
+          });
+        });
+
+        // ---------- Ocultar duas folder-item quando a viewport corresponder ao breakpoint médio ----------
+        // Critério: quando (min-width: 881px) and (max-width: 1200px) => esconder as 2 últimas folder-item
+        const mql = window.matchMedia('(min-width: 881px) and (max-width: 1200px)');
+
+        /**
+         * Aplica/Remove esconderijo nas duas últimas folder-items.
+         * Usa display:none + aria-hidden + tabindex para manter acessibilidade.
+         */
+        function updateFolderItemsForBreakpoint() {
+          const items = Array.from(document.querySelectorAll('.folder-list .folder-item'));
+          const total = items.length;
+          if (!total) return;
+
+          // Quantas devemos ocultar quando no breakpoint (2, mas não mais do que existam)
+          const toHide = Math.min(2, total);
+
+          items.forEach((li, index) => {
+            const btn = li.querySelector('.folder-btn');
+            const shouldHide = mql.matches && index >= total - toHide;
+            if (shouldHide) {
+              // esconder visualmente e tornar inacessível
+              li.style.display = 'none';
+              li.setAttribute('aria-hidden', 'true');
+              if (btn) {
+                btn.setAttribute('tabindex', '-1');
+                btn.setAttribute('aria-hidden', 'true');
+              }
+            } else {
+              // restaurar ao estado normal
+              li.style.display = '';
+              li.removeAttribute('aria-hidden');
+              if (btn) {
+                btn.removeAttribute('tabindex');
+                btn.removeAttribute('aria-hidden');
+              }
+            }
+          });
+        }
+
+        // Avalia na carga inicial
+        updateFolderItemsForBreakpoint();
+
+        // Reavalia quando a largura mudar (matchMedia 'change' e fallback resize)
+        if (typeof mql.addEventListener === 'function') {
+          mql.addEventListener('change', updateFolderItemsForBreakpoint);
+        } else if (typeof mql.addListener === 'function') {
+          // Suporte para navegadores mais antigos
+          mql.addListener(updateFolderItemsForBreakpoint);
+        }
+
+        // Fallback adicional para fires de resize que não acionam matchMedia change
+        window.addEventListener('resize', updateFolderItemsForBreakpoint);
+
+        // Observador: se a lista de pastas for alterada dinamicamente, re-aplica regras
+        const folderList = document.querySelector('.folder-list');
+        if (folderList) {
+          const mo = new MutationObserver(() => {
+            updateFolderItemsForBreakpoint();
+          });
+          mo.observe(folderList, { childList: true, subtree: false });
+        }
+
+        // ----------------- Trocar src das imagens de file-item ao passar o mouse -----------------
+        /**
+         * Gera a versão "-over" de um src, preservando query strings.
+         * Exemplo: "path/arq-rust.svg" -> "path/arq-rust-over.svg"
+         * Se já tiver "-over" imediatamente antes da extensão, retorna o src original.
+         */
+        function makeOverSrc(src) {
+          // Se src contém ? ou #, separamos
+          // Usamos regex para separar: nome (com caminho) + extensão + query/hash (opcional)
+          const m = src.match(/^(.*?)([^\/?#]+?)(\.[^\/?#]+)([?#].*)?$/);
+          // m[1] => caminho até antes do nome do arquivo (inclui trailing slash se houver)
+          // m[2] => nome do arquivo sem extensão
+          // m[3] => extensão, ex ".svg"
+          // m[4] => query/hash opcional (ex: "?v=1")
+          if (!m) return src; // formato inesperado: retorna como está
+
+          const pathPrefix = m[1] || '';
+          const name = m[2] || '';
+          const ext = m[3] || '';
+          const suffix = m[4] || '';
+
+          // se o nome já termina com '-over', não alteramos
+          if (name.endsWith('-over')) {
+            return src;
+          }
+
+          return pathPrefix + name + '-over' + ext + suffix;
+        }
+
+        /**
+         * Aplica comportamento de hover/focus em todos os .file-item encontrados.
+         * Armazena o src original em data-original-src para restauração.
+         */
+        function attachFileItemHoverBehavior(root = document) {
+          const items = Array.from(root.querySelectorAll('.file-item'));
+          items.forEach(item => {
+            // Já processado?
+            if (item.__hoverAttached) return;
+            const img = item.querySelector('img.file-icon') || item.querySelector('img');
+
+            if (!img) {
+              item.__hoverAttached = true; // marcar para não verificar novamente
+              return;
+            }
+
+            // Garantir que temos o src original salvo
+            if (!img.dataset.originalSrc) {
+              img.dataset.originalSrc = img.src;
+            }
+
+            // mouseenter / mouseleave
+            item.addEventListener('mouseenter', () => {
+              // Atualiza original (caso src tenha sido alterado dinamicamente)
+              if (!img.dataset.originalSrc) img.dataset.originalSrc = img.src;
+              try {
+                const over = makeOverSrc(img.dataset.originalSrc);
+                if (over) img.src = over;
+              } catch (e) {
+                // no-op: em caso de erro, mantemos a imagem original
+              }
+            });
+
+            item.addEventListener('mouseleave', () => {
+              if (img.dataset.originalSrc) img.src = img.dataset.originalSrc;
+            });
+
+            // Suportar foco por teclado para acessibilidade (focusin / focusout)
+            item.addEventListener('focusin', () => {
+              if (!img.dataset.originalSrc) img.dataset.originalSrc = img.src;
+              const over = makeOverSrc(img.dataset.originalSrc);
+              if (over) img.src = over;
+            });
+            item.addEventListener('focusout', () => {
+              if (img.dataset.originalSrc) img.src = img.dataset.originalSrc;
+            });
+
+            // Marcar como processado para evitar múltiplos attachments
+            item.__hoverAttached = true;
+          });
+        }
+
+        // Aplica na carga inicial
+        attachFileItemHoverBehavior();
+
+        // Se a grade de arquivos for atualizada dinamicamente, re-aplica comportamento aos novos itens
+        const fileGrid = document.querySelector('.file-grid');
+        if (fileGrid) {
+          const moFiles = new MutationObserver((mutations) => {
+            // sempre re-anexa apenas aos novos nós
+            mutations.forEach(mutation => {
+              if (mutation.addedNodes && mutation.addedNodes.length) {
+                attachFileItemHoverBehavior(mutation.target || fileGrid);
+              }
+            });
+            // também garantir re-aplicação geral caso necessário
+            attachFileItemHoverBehavior();
+          });
+          moFiles.observe(fileGrid, { childList: true, subtree: true });
+        }
+
+        // Fim do IIFE
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,163 @@
+<!-- bloco_3.html -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/corpo3.css') }}">
+<section id="quickstart" class="quickstart-section" aria-label="Quickstart">
+  <div class="qs-wrap">
+    <div class="qs-inner">
+
+      <!-- COLUNA ESQUERDA: logo + título + descrição + botão -->
+      <div class="qs-left">
+        <div class="qs-heading">
+          <img src="{{ url_for('static', filename='images/corpo/bloco3/logo_quickstart.svg') }}"
+               alt="Logo Quickstart"
+               class="qs-logo" width="48" height="48">
+          <h3 class="qs-title">Quickstart</h3>
+        </div>
+
+        <p class="qs-lead">
+          Our API is compatible with OpenAI and Anthropic’s SDKs<br>
+          Migrating is as easy as generating an API key and changing a URL.
+        </p>
+
+        <div class="qs-actions">
+          <button class="cta_2" type="button" aria-label="Solicitar Proposta">
+            <img class="qs-btn-icon"
+                 src="{{ url_for('static', filename='images/corpo/bloco3/solicitar_proposta.svg') }}"
+                 alt="" aria-hidden="true" width="20" height="20">
+            <span class="qs-btn-text">
+              <span class="qs-regular">Solicitar</span>
+              <span class="qs-bold">Proposta</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- COLUNA DIREITA: ilustração (troca instantânea de SVG) -->
+      <div class="qs-right" aria-hidden="true">
+        <div class="qs-illustration-wrap" style="position:relative; width:650px; height:490px;">
+          <!-- imagem única que receberá troca instantânea de src -->
+          <!-- src inicial configurado para o arquivo "barra 1.svg" (pode ser alterado pelo script) -->
+          <img id="comp-img"
+               class="qs-illustration"
+               src="static/images/corpo/bloco3/barra 1.svg"
+               alt="Ilustração de um computador"
+               width="650" height="490"
+               style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain;">
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Script: troca instantânea (sequência 1 → 2 → 3 → ... ) -->
+<script>
+  (function () {
+    // --- CONFIGURÁVEL: intervalo em milissegundos entre frames ---
+    // Altere aqui para acelerar/diminuir (ex.: 500 = 0.5s, 2000 = 2s)
+    let FRAME_INTERVAL_MS = 200;
+
+    // Caminho base (mantive o mesmo que você usava)
+    const BASE_PATH = 'static/images/corpo/bloco3/';
+
+    // Opção A: usar prefixo + número (ex.: "barra " + 1 + ".svg" => "barra 1.svg")
+    // OBS: o prefixo contém o espaço intencional entre texto e número.
+    const FILE_PREFIX = 'barra ';
+    const FILE_EXT = '.svg';
+    const MAX_FRAME = 25; // ajuste se tiver mais/menos arquivos
+
+    // Opção B (alternativa): definir explicitamente os nomes de arquivo.
+    // Se preferir usar nomes não sequenciais ou com formatos diferentes, coloque-os aqui.
+    // Exemplo: const CUSTOM_NAMES = ['barra 1.svg','barra 2.svg','barra 3.svg'];
+    const CUSTOM_NAMES = null; // <-- deixe null para usar FILE_PREFIX + número
+
+    // Monta sequência de nomes que será usada pelo script.
+    let sequenceNames = [];
+    if (Array.isArray(CUSTOM_NAMES) && CUSTOM_NAMES.length > 0) {
+      sequenceNames = CUSTOM_NAMES.slice();
+    } else {
+      for (let i = 1; i <= MAX_FRAME; i++) {
+        sequenceNames.push(`${FILE_PREFIX}${i}${FILE_EXT}`);
+      }
+    }
+
+    // Função auxiliar para construir src com encoding seguro (tratando espaços e caracteres especiais)
+    function makeSrc(filename) {
+      // encodeURIComponent apenas na parte do filename evita burlar barras do BASE_PATH
+      return `${BASE_PATH}${encodeURIComponent(filename)}`;
+    }
+
+    // Preload das imagens para trocas instantâneas mais suaves
+    (function preload() {
+      // usar Set para eliminar duplicatas, se houver
+      const unique = Array.from(new Set(sequenceNames));
+      unique.forEach(name => {
+        const img = new Image();
+        img.src = makeSrc(name);
+      });
+    })();
+
+    const imgEl = document.getElementById('comp-img');
+    if (!imgEl) return;
+
+    // Estado do índice da sequência (começa no primeiro elemento)
+    let seqIndex = 0;
+
+    // garantia: src inicial corresponde ao primeiro item da sequência
+    // usamos encode para garantir compatibilidade com espaços
+    imgEl.src = makeSrc(sequenceNames[0]);
+
+    // Função que avança para o próximo frame de forma INSTANTÂNEA (sem transição)
+    function advanceFrame() {
+      seqIndex = (seqIndex + 1) % sequenceNames.length;
+      const nextName = sequenceNames[seqIndex];
+      const nextSrc = makeSrc(nextName);
+      // troca seca e instantânea
+      imgEl.src = nextSrc;
+    }
+
+    // Controle do intervalo (permitir reiniciar quando alterar velocidade)
+    let intervalId = setInterval(advanceFrame, FRAME_INTERVAL_MS);
+
+    // Função exposta para alterar a velocidade em runtime:
+    // uso: window.setCompSpeed(500) -> 500ms entre frames
+    window.setCompSpeed = function (ms) {
+      if (typeof ms !== 'number' || ms <= 0) {
+        console.warn('setCompSpeed: valor inválido. Informe um número positivo (ms).');
+        return;
+      }
+      FRAME_INTERVAL_MS = ms;
+      clearInterval(intervalId);
+      intervalId = setInterval(advanceFrame, FRAME_INTERVAL_MS);
+      return intervalId;
+    };
+
+    // Função exposta para trocar sequência em runtime (pode receber array de nomes ou número máximo)
+    // Uso:
+    //   window.setCompSequence({ prefix: 'barra ', ext: '.svg', max: 4 })
+    // ou
+    //   window.setCompSequence(['barra 1.svg','barra 2.svg','barra 3.svg'])
+    window.setCompSequence = function (cfg) {
+      if (Array.isArray(cfg) && cfg.length > 0) {
+        sequenceNames = cfg.slice();
+      } else if (cfg && typeof cfg === 'object' && cfg.prefix && cfg.ext && cfg.max) {
+        const max = Number(cfg.max) || 0;
+        const prefix = String(cfg.prefix);
+        const ext = String(cfg.ext);
+        const newSeq = [];
+        for (let i = 1; i <= max; i++) newSeq.push(`${prefix}${i}${ext}`);
+        if (newSeq.length) sequenceNames = newSeq;
+      } else {
+        console.warn('setCompSequence: formato inválido. Informe um array de nomes ou um objeto {prefix, ext, max}.');
+        return;
+      }
+      // reset index e atualiza imagem imediatamente
+      seqIndex = 0;
+      imgEl.src = makeSrc(sequenceNames[0]);
+    };
+
+    // Cleanup ao descarregar a página
+    window.addEventListener('beforeunload', () => {
+      clearInterval(intervalId);
+    });
+  })();
+</script>

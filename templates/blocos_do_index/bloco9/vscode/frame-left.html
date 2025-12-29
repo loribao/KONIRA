@@ -1,0 +1,77 @@
+<!-- frame-left.html -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index/bloco9/interface-vscode/frame-left.css') }}">
+
+<div class="left-root" role="navigation" aria-label="Barra lateral estilo VS Code — esquerda">
+  <div class="left-bar" title="Barra esquerda">
+    <button class="left-icon active" title="Explorer" aria-label="Explorer" aria-pressed="true" data-key="explorer">
+      <img src="static/images/corpo/bloco9/icons/left/explorer.svg" alt="" aria-hidden="true" />
+    </button>
+
+    <button class="left-icon" title="Buscar" aria-label="Buscar" aria-pressed="false" data-key="search">
+      <img src="static/images/corpo/bloco9/icons/left/search.svg" alt="" aria-hidden="true" />
+    </button>
+
+    <button class="left-icon" title="Controle de Versão" aria-label="Controle de Versão" aria-pressed="false" data-key="source-control">
+      <img src="static/images/corpo/bloco9/icons/left/source-control.svg" alt="" aria-hidden="true" />
+    </button>
+
+    <button class="left-icon" title="Executar/Depurar" aria-label="Executar e Depurar" aria-pressed="false" data-key="run">
+      <img src="static/images/corpo/bloco9/icons/left/run.svg" alt="" aria-hidden="true" />
+    </button>
+
+    <button class="left-icon" title="Explorador Remoto" aria-label="Explorador Remoto" aria-pressed="false" data-key="remote-explorer">
+      <img src="static/images/corpo/bloco9/icons/left/remote-explorer.svg" alt="" aria-hidden="true" />
+    </button>
+
+    <button class="left-icon" title="Extensões" aria-label="Extensões" aria-pressed="false" data-key="extensions">
+      <img src="static/images/corpo/bloco9/icons/left/extensions.svg" alt="" aria-hidden="true" />
+    </button>
+
+    <div class="left-bottom">
+      <button class="left-icon" title="Conta" aria-label="Conta" aria-pressed="false" data-key="account">
+        <img src="static/images/corpo/bloco9/icons/left/account.svg" alt="" aria-hidden="true" />
+      </button>
+
+      <button class="left-icon" title="Gerenciar / Configurações" aria-label="Configurações" aria-pressed="false" data-key="settings">
+        <img src="static/images/corpo/bloco9/icons/left/settings.svg" alt="" aria-hidden="true" />
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const buttons = Array.from(document.querySelectorAll('.left-bar .left-icon'));
+    function setActive(targetBtn) {
+      buttons.forEach(btn => {
+        if (btn === targetBtn) {
+          btn.classList.add('active');
+          btn.setAttribute('aria-pressed', 'true');
+        } else {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-pressed', 'false');
+        }
+      });
+    }
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        setActive(btn);
+        const ev = new CustomEvent('leftIconSelect', { detail: { key: btn.dataset.key }, bubbles: true });
+        btn.dispatchEvent(ev);
+      });
+
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+    });
+
+    window.leftBarSetActive = (key) => {
+      const btn = document.querySelector(`.left-bar .left-icon[data-key="${key}"]`);
+      if (btn) setActive(btn);
+    };
+  })();
+</script>

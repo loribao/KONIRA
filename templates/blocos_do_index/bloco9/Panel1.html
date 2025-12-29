@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Painéis — Combinado (Panel1 + Panel2)</title>
+
+    <!-- Fonte (mantida uma vez) -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* =================== VARIÁVEIS GLOBAIS =================== */
+        :root {
+            --bg: #080808;
+            --card: #161616;
+            --accent: #F51919;
+            --muted: #9aa3b2;
+            --white: #ffffff;
+            --gap: 48px;
+            --cta-width: 320px;
+
+            /* Controle de escala para .features */
+            --features-max-width: 1400px;
+            /* largura onde a escala chega ao máximo */
+            --features-min-width: 360px;
+            /* largura abaixo da qual a escala chega ao mínimo */
+            --features-max-scale: 1;
+            /* escala em telas grandes */
+            --features-min-scale: 0.80;
+            /* escala mínima em telas pequenas */
+        }
+
+        /* =================== RESET MÍNIMO =================== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: var(--bg);
+            color: var(--white);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* =================== LAYOUT SUPERWIDE =================== */
+        .super-container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: calc(var(--gap) * 1.5);
+            padding: 0px 164px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* cada painel é independente e não encolhe */
+        .panel {
+            flex: 0 0 auto;
+            display: block;
+            min-width: 900px;
+            max-width: 100%;
+            height: 80vh;
+        }
+
+        /* =================== PANEL 1 =================== */
+        .containerp1 {
+            display: flex;
+            align-items: stretch;
+            justify-content: flex-start;
+            margin: 0;
+        }
+
+        .card {
+            display: inline-flex;
+            gap: 64px;
+            align-items: center;
+            width: fit-content;
+        }
+
+        .text {
+            width: 45vw;
+            display: flex;
+            flex-direction: column;
+            gap: 41px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .headline {
+            font-size: 7vh;
+            line-height: 7vh;
+            font-weight: 600;
+            flex-wrap: wrap;
+        }
+
+        .headline--accentP1 {
+            color: #FE1800;
+            text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        }
+
+        .headline--main {
+            color: white;
+            text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        }
+
+        .subtitle-wrap {
+            width: 54vh;
+            height: 86px;
+            display: flex;
+            align-items: center;
+            gap: 0px 8px;
+            flex-wrap: wrap;
+        }
+
+        .muted {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 3vh;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .accentP1 {
+            color: #e71a1a;
+            font-size: 3vh;
+            font-style: italic;
+            font-weight: 700;
+        }
+
+        .os_homi {
+            position: relative;
+            z-index: 2;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            align-content: flex-start;
+            flex-wrap: nowrap;
+        }
+
+        .os_homi img {
+            max-width: 100vh;
+            width: 81vh;
+            height: auto;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* cursor decorativo do panel1 */
+        #page-cursor {
+            position: fixed;
+            left: var(--cursor-x, 50%);
+            top: var(--cursor-y, 50%);
+            transform: translate(var(--cursor-tx, -50%), var(--cursor-ty, -50%));
+            width: 48px;
+            height: auto;
+            z-index: 9999;
+            pointer-events: none;
+            user-select: none;
+            transition: left .12s ease, top .12s ease, transform .12s ease;
+        }
+
+        @media (min-width:1200px) {
+            .headline {
+                font-size: 6vh;
+            }
+
+            .containerp1 {
+                max-width: 1200px;
+            }
+        }
+
+        @media (max-width:1000px) {
+            .card {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .text {
+                width: 100%;
+                max-width: 928px;
+            }
+        }
+
+        /* =================== PANEL 2 =================== */
+        .container-panel2 {
+            display: flex;
+            gap: 48px;
+            align-items: center;
+            width: 100vw;
+            height: 81vh;
+        }
+
+        .hero_P2 {
+            display: flex;
+            flex: 1;
+            min-width: 460px;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-content: flex-start;
+            max-width: 600px;
+        }
+
+        .hero_P2__header {
+            margin-bottom: 18px;
+        }
+
+        .hero_P2__title {
+            font-weight: 600;
+            font-size: clamp(22px, 4vw, 36px);
+            line-height: 1.06;
+            margin: 0 0 12px;
+            color: var(--white);
+        }
+
+        .hero_P2__lead {
+            margin: 0;
+            color: var(--muted);
+            max-width: 44ch;
+            font-size: 16px;
+        }
+
+        .cta_2 {
+            width: 100%;
+            max-width: var(--cta-width);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+            padding: 22px 28px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.071);
+            background: transparent;
+            color: var(--white);
+            cursor: pointer;
+            transition: background .18s ease, transform .12s ease;
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .cta_2>img,
+        .cta_2>span {
+            position: relative;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .cta_2::after {
+            content: "";
+            position: absolute;
+            top: -10%;
+            left: -60%;
+            width: 40%;
+            height: 120%;
+            transform: skewX(-20deg) translateX(0);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.01));
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+            will-change: transform, opacity;
+            mix-blend-mode: screen;
+            transition: transform .35s cubic-bezier(.2, .9, .3, 1), opacity .28s ease;
+        }
+
+        .cta_2:hover::after,
+        .cta_2:focus::after {
+            transform: skewX(-20deg) translateX(180%);
+            opacity: 1;
+        }
+
+        .cta_2:focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .cta_2:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        /* =================== FEATURES (GRID + ESCALA FLUIDA) =================== */
+        /* Mantém grid responsivo; escala fluida aplicada apenas em viewports maiores
+   para evitar textos muito pequenos em celulares. */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            flex: 1.2;
+            transform-origin: top center;
+            transition: transform .18s ease;
+            /* suaviza mudança ao redimensionar */
+            will-change: transform;
+            max-width: 600px;
+
+            /* por padrão (mobile/pequenas larguras) não aplicamos transform
+     — evita texto micro e problemas de acessibilidade */
+            transform: none;
+        }
+
+        /* Cada card/feature */
+        .feature {
+            background: var(--card);
+            padding: 31px 31px 75px 31px;
+            border-radius: 18px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            flex-direction: column;
+            --diag-angle: 0deg;
+            --diag-ty: 0px;
+            transform: rotate(var(--diag-angle)) translateY(var(--diag-ty));
+            transform-origin: center;
+            transition: background .22s ease, transform .28s cubic-bezier(.2, .9, .2, 1), color .16s ease, box-shadow .18s ease;
+            position: relative;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+            max-width: 300px;
+        }
+
+        .feature:focus-visible {
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55), 0 0 0 3px rgba(74, 144, 226, 0.12);
+            border-radius: 18px;
+        }
+
+        .feature__icon {
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+            display: inline-block;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image .12s ease, transform .18s ease, filter .18s ease, opacity .12s ease;
+            background-color: transparent;
+        }
+
+        .feature__title {
+            font-weight: 700;
+            font-size: 16px;
+            margin: 0 0 6px;
+            color: inherit;
+        }
+
+        .feature__desc {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.45;
+            color: inherit;
+            opacity: .95;
+            transition: color .16s ease;
+        }
+
+        .feature:hover,
+        .feature:focus,
+        .feature:focus-within {
+            --diag-angle: 8deg;
+            --diag-ty: -6px;
+            background: linear-gradient(to bottom right, #ff3939, #fe2b2b);
+            color: #080808;
+            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45);
+        }
+
+        .feature:hover .feature__icon,
+        .feature:focus .feature__icon,
+        .feature:focus-within .feature__icon {
+            transform: translateY(-2px);
+            opacity: 1;
+        }
+
+        /* Icon default (ajuste conforme seu projeto) */
+        .feature__icon {
+            background-image: url("{{ url_for('static', filename='images/corpo/bloco9/Panel2/vector-stroke.svg') }}");
+        }
+
+        .feature:hover .feature__icon {
+            background-image: url("{{ url_for('static', filename='images/corpo/bloco9/Panel2/vector-stroke_over.svg') }}");
+        }
+
+        /* =================== RESPONSIVIDADE =================== */
+        /* Layout para viewports menores */
+        @media (max-width: 1000px) {
+            .super-container {
+                flex-direction: column;
+                align-items: stretch;
+                overflow-x: hidden;
+                padding: 24px;
+                gap: 28px;
+            }
+
+            .panel {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .os_homi img {
+                width: 100%;
+                max-width: 420px;
+            }
+
+            /* Mantemos transform: none em telas pequenas por acessibilidade */
+            .features {
+                transform: none;
+            }
+        }
+
+        /* Aplicar escala fluida somente em viewports maiores que 1000px:
+   usamos clamp() para limitar entre --features-min-scale e --features-max-scale.
+   Isso evita que o texto fique muito pequeno em dispositivos móveis e
+   também remove duplicidade/contradição nas media queries. */
+        @media (min-width: 1001px) {
+            .features {
+                /* cálculo de escala (linear entre min/max widths).
+       Fórmula:
+         scale = clamp(minScale, calc(((100vw - minWidth) / (maxWidth - minWidth)) * (maxScale - minScale) + minScale), maxScale)
+    */
+                --features-scale: clamp(var(--features-min-scale),
+                        calc(((100vw - var(--features-min-width)) / (var(--features-max-width) - var(--features-min-width))) * (var(--features-max-scale) - var(--features-min-scale)) + var(--features-min-scale)),
+                        var(--features-max-scale));
+
+                transform: scale(var(--features-scale));
+                transition: transform .18s ease;
+            }
+        }
+
+        /* Ajuste para telas muito altas/largas (opcional) */
+        @media (min-width: 1600px) {
+            .panel {
+                min-width: 1100px;
+            }
+        }
+
+        /* Fallbacks simples (navegadores antigos) — unidades corretas e sem duplicação.
+   Coloquei em ordem decrescente para que breakpoints menores sobreponham maiores. */
+        @media (max-height: 900px) {
+
+            /* apenas se precisar de um ajuste explícito em navegadores antigos,
+     podemos forçar um scale ligeiro. Se preferir manter none em mobile,
+     remova esta regra. */
+            .features {
+                transform: scale(0.9);
+            }
+
+            .container-panel2 {
+                height: 80vh;
+            }
+
+            .hero_P2 {
+                padding: 0px 0px 10px 0px;
+            }
+        }
+
+        @media (max-height: 800px) {
+            .features {
+                transform: scale(0.8);
+            }
+
+            .container-panel2 {
+                height: 90vh;
+            }
+
+            .hero_P2 {
+                padding: 0px 0px 30px 0px;
+            }
+
+        }
+
+        @media (max-height: 699px) {
+
+            /* abaixo dessa largura, preferimos não escalar para preservar legibilidade */
+            .features {
+                transform: scale(0.7);
+            }
+
+            .container-panel2 {
+                height: 100vh;
+            }
+
+            .hero_P2 {
+                padding: 0px 0px 70px 0px;
+            }
+        }
+
+        /* =================== FIM =================== */
+    </style>
+
+</head>
+
+<body>
+    <!-- cursor (Panel1) -->
+    <img id="page-cursor" src="{{ url_for('static', filename='images/corpo/bloco9/Panel1/cursor.svg') }}"
+        alt="cursor decorativo" aria-hidden="true" />
+
+    <div class="super-container" role="main" aria-label="Painéis lado a lado (Panel 1 e Panel 2)">
+
+        <!-- PANEL 1 (conteúdo do primeiro HTML) -->
+        <section class="panel panel-01" aria-labelledby="p1-title">
+            <div class="containerp1">
+                <div class="card">
+                    <div class="text">
+                        <div id="p1-title" class="headline" aria-hidden="false">
+                            <span class="headline--accentP1">/</span>
+                            <span class="headline--main">Texto Grande top, falando <br>alguma coisa importante</span>
+                        </div>
+
+                        <div class="subtitle-wrap" role="note" aria-label="informações complementares">
+                            <span class="muted">Textinho pequeno</span>
+                            <span class="accentP1">falando algo</span>
+                            <span class="muted">para complementar Textinho</span>
+                            <span class="accentP1">pequeno</span>
+                            <span class="muted">falando</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="os_homi">
+                    <img src="{{ url_for('static', filename='images/corpo/bloco9/Panel1/handshake.png') }}"
+                        alt="Dois homens apertando as mãos" />
+                </div>
+            </div>
+        </section>
+
+        <!-- PANEL 2 (conteúdo do segundo HTML) -->
+        <section class="panel panel-2" aria-labelledby="p2-title">
+            <div class="container-panel2">
+
+
+                <section class="hero_P2" aria-labelledby="hero_P2-title">
+                    <header class="hero_P2__header">
+                        <h1 id="hero_P2-title" class="hero_P2__title">Coisas que eu faço para<br>melhorar seu
+                            software</h1>
+                        <p class="hero_P2__lead">Texto complementar curto e informativo que explica rapidamente o
+                            valor do recurso e
+                            convida o visitante a saber mais.</p>
+                    </header>
+
+                    <button class="cta_2" type="button" aria-label="Saiba mais sobre os recursos">
+                        <img src="{{ url_for('static', filename='images/corpo/bloco9/Panel2/iconbotton.svg') }}" alt=""
+                            aria-hidden="true" width="20" height="20">
+                        <span>Saiba mais</span>
+                    </button>
+                </section>
+
+                <section class="features" aria-label="Recursos">
+
+                    <article class="feature" tabindex="0" aria-labelledby="f1-title">
+                        <span class="feature__icon" aria-hidden="true"></span>
+                        <div>
+                            <h2 id="f1-title" class="feature__title">Título do recurso 1</h2>
+                            <p class="feature__desc">Descrição curta para complementar e explicar rapidamente o
+                                benefício do recurso.</p>
+                        </div>
+                    </article>
+
+                    <article class="feature" tabindex="0" aria-labelledby="f2-title">
+                        <span class="feature__icon" aria-hidden="true"></span>
+                        <div>
+                            <h2 id="f2-title" class="feature__title">Título do recurso 2</h2>
+                            <p class="feature__desc">Descrição curta para complementar e explicar rapidamente o
+                                benefício do recurso.</p>
+                        </div>
+                    </article>
+
+                    <article class="feature" tabindex="0" aria-labelledby="f3-title">
+                        <span class="feature__icon" aria-hidden="true"></span>
+                        <div>
+                            <h2 id="f3-title" class="feature__title">Título do recurso 3</h2>
+                            <p class="feature__desc">Descrição curta para complementar e explicar rapidamente o
+                                benefício do recurso.</p>
+                        </div>
+                    </article>
+
+                    <article class="feature" tabindex="0" aria-labelledby="f4-title">
+                        <span class="feature__icon" aria-hidden="true"></span>
+                        <div>
+                            <h2 id="f4-title" class="feature__title">Título do recurso 4</h2>
+                            <p class="feature__desc">Descrição curta para complementar e explicar rapidamente o
+                                benefício do recurso.</p>
+                        </div>
+                    </article>
+
+                </section>
+
+
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        function setCursor(x, y) {
+            if (typeof x === 'number') x = x + 'px';
+            if (typeof y === 'number') y = y + 'px';
+            document.documentElement.style.setProperty('--cursor-x', x);
+            document.documentElement.style.setProperty('--cursor-y', y);
+        }
+
+        // Exemplo: posiciona em 400px, 180px (ajuste conforme a sua resolução)
+        setCursor(400, 180);
+    </script>
+
+</body>
+
+</html>

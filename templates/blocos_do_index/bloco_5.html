@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bloco 5 — CTA DevSecOps (botão + ponteiro animado)</title>
+  <!-- Fonte (Montserrat) -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+/* ------------------------------ Variáveis removidas e valores aplicados diretamente ------------------------------ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #131313;
+  color: #fff;
+ 
+}
+
+/* layout */
+.bloco5-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px 20vh;
+  overflow: visible;
+}
+
+.bloco5-wrap {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  text-align: center;
+  position: relative;
+  padding: 20px;
+}
+
+.bloco5-title {
+  font-size: 64px;
+  line-height: 1.02;
+  font-weight: 700;
+  margin: 0 0 18px;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.bloco5-title .title-slash {
+  color: #e44545;
+}
+
+.bloco5-subtitle {
+  font-size: 20px;
+  margin: 0 0 40px;
+  font-weight: 400;
+  color: #b8b8b8;
+}
+
+.cta-wrap {
+  display: inline-block;
+  position: relative;
+  overflow: visible;
+}
+
+/* ============================ BOTÃO (valores literais aplicados) ============================ */
+.cta-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 669px; /* substituído de --cta-width */
+  height: 116px; /* substituído de --cta-height */
+  padding: 0 36px;
+  border: 0;
+  border-radius: 120px; /* substituído de --cta-radius */
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  cursor: pointer;
+  z-index: 0;
+  background-color: #FE2B2B; /* substituído de --cta-base */
+  background-image: linear-gradient(90deg, #FE2B2B 0%, #FE2B2B 30%, #FF8A8A 50%, #FE2B2B 70%, #FE2B2B 100%); /* substituído de --cta-light */
+  background-repeat: no-repeat;
+  background-size: 300% 100%;
+  background-position: 100% 50%;
+  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.18); /* substituído de --cta-boxshadow */
+  transition: transform .12s cubic-bezier(.2,.9,.3,1), box-shadow .12s cubic-bezier(.2,.9,.3,1), background-position 0.9s cubic-bezier(.2,.9,.3,1);
+  will-change: transform, box-shadow, background-position;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  text-decoration: none;
+}
+
+/* hover / foco */
+.cta-btn:hover,
+.cta-btn:focus-visible {
+  background-position: 0% 50%;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(239, 68, 68, 0.28);
+}
+
+.cta-btn:active {
+  transform: translateY(2px) scale(.998);
+}
+
+/* shimmer pseudo-element */
+.cta-btn::after {
+  content: "";
+  position: absolute;
+  top: -10%;
+  left: -60%;
+  width: 40%;
+  height: 120%;
+  transform: skewX(-20deg) translateX(0);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.02));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+  will-change: transform, opacity;
+  mix-blend-mode: screen;
+}
+
+@keyframes cta-shimmer-move {
+  0% {
+    transform: skewX(-20deg) translateX(-0%);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.75;
+  }
+
+  60% {
+    transform: skewX(-20deg) translateX(400%);
+    opacity: 0.75;
+  }
+
+  100% {
+    transform: skewX(-20deg) translateX(600%);
+    opacity: 0;
+  }
+}
+
+.cta-btn:hover::after,
+.cta-btn:focus-visible::after {
+  animation: cta-shimmer-move 1.2s cubic-bezier(.2,.9,.3,1) forwards;
+}
+
+@keyframes cta-breathe {
+  0% {
+    background-position: 100% 50%;
+  }
+
+  50% {
+    background-position: 92% 50%;
+  }
+
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* animação de respiração aplicada com duração literal */
+.cta-btn {
+  animation: cta-breathe 6s ease-in-out infinite; /* substituído de --cta-breathe-duration */
+}
+
+/* background decorativo (SVG + blur) */
+.cta-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none"%3E%3Cpath fill="%23FF8A8A" d="M0,50 Q25,60 50,50 Q75,40 100,50 Q75,60 50,70 Q25,80 0,70 Z"%3E%3C/path%3E%3C/svg%3E') no-repeat center center;
+  background-size: cover;
+  filter: blur(40px);
+  z-index: -1;
+  animation: move-background 6s linear infinite;
+}
+
+@keyframes move-background {
+  0% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(-40%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.btn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+  line-height: 1;
+}
+
+.btn-icon {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  user-select: none;
+  z-index: 2;
+}
+
+.btn-regular {
+  font-size: 32px;
+  font-weight: 400;
+  color: #0A0E1E; /* substituído de --cta-text-dark */
+  line-height: 1;
+}
+
+.btn-bold {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0A0E1E; /* substituído de --cta-text-dark */
+  line-height: 1;
+}
+
+/* Responsividade: aplicando os valores que antes eram sobrescritos no :root dentro dos media queries */
+@media (max-width:900px) {
+  .cta-btn {
+    width: 520px; /* substituído do :root responsivo */
+    height: 96px; /* substituído do :root responsivo */
+    border-radius: 100px; /* substituído do :root responsivo */
+  }
+
+  .pointer-wrap {
+    width: 150px;
+    height: 195px;
+  }
+
+  .btn-icon {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+  }
+
+  .btn-regular,
+  .btn-bold {
+    font-size: 28px;
+  }
+
+  .bloco5-title {
+    font-size: 48px;
+  }
+
+  .bloco5-subtitle {
+    font-size: 18px;
+  }
+}
+
+@media (max-width:520px) {
+  .cta-btn {
+    width: 320px; /* substituído do :root responsivo */
+    height: 72px; /* substituído do :root responsivo */
+    border-radius: 80px; /* substituído do :root responsivo */
+  }
+
+  .pointer-wrap {
+    display: none !important;
+  }
+
+  .bloco5-title {
+    font-size: 36px;
+    padding: 0 8px;
+  }
+
+  .bloco5-subtitle {
+    font-size: 16px;
+    padding: 0 12px;
+  }
+
+  .btn-icon {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+  }
+
+  .btn-text {
+    gap: 8px;
+  }
+
+  .btn-regular,
+  .btn-bold {
+    font-size: 20px;
+  }
+}
+
+/* respeitar reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .pointer-wrap {
+    animation: none !important;
+    opacity: 1 !important;
+    display: block !important;
+    transform: none !important;
+  }
+
+  .pointer-img {
+    animation: none !important;
+    transform: rotate(-12deg) !important;
+  }
+
+  .cta-btn {
+    animation: none !important;
+  }
+
+  .cta-btn::after {
+    display: none !important;
+  }
+}
+
+/* ===== PONTEIRO (wrap + img) =====
+   - A posição final pode ser ajustada inline no elemento (antes via --pointer-right / --pointer-top).
+   - Padrões aplicados abaixo: right: 0px; top: 0px.
+*/
+.pointer-wrap {
+  position: absolute;
+  /* final position relative to .cta-wrap (ajustável inline) */
+  right: -100px; /* substituído de --pointer-right (padrão) */
+  top: 0px;   /* substituído de --pointer-top (padrão) */
+  width: 220px;
+  height: 265px;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
+  transform-origin: center center;
+  z-index: 4;
+  opacity: 1;
+  transition: none;
+  display: block;
+}
+
+.pointer-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transform: rotate(-12deg) translateY(0);
+  will-change: transform;
+}
+
+/* bob (após entrada) */
+@keyframes pointer-bob {
+  0% {
+    transform: rotate(-12deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(-12deg) translateY(8px);
+  }
+
+  100% {
+    transform: rotate(-12deg) translateY(0);
+  }
+}
+
+.pointer-img.bob {
+  animation: pointer-bob 1.2s ease-in-out 0.9s infinite;
+}
+
+</style>
+
+</head>
+
+<body>
+  <section id="bloco-5" class="bloco5-section" aria-label="Solicitar Proposta DevSecOps">
+    <div class="bloco5-wrap">
+      <div class="content">
+        <!-- TÍTULO PRINCIPAL -->
+        <h1 class="bloco5-title">
+          <span class="title-slash">/</span>Quero uma Proposta <br>DevSecOps
+        </h1>
+
+        <!-- SUBTÍTULO -->
+        <p class="bloco5-subtitle">Plano prático com PoC, roadmap e estimativa de investimento</p>
+
+        <!-- BOTÃO + PONTEIRO -->
+        <div class="cta-wrap">
+          <button id="cta-main" class="cta-btn" type="button" aria-label="Solicitar Proposta">
+            <span class="btn-text">
+              <!-- ajuste a src conforme sua infra; mantive placeholder template -->
+              <img src="{{ url_for('static', filename='images/corpo/bloco5/solicitar.svg') }}" alt="" class="escudo-icon" aria-hidden="true">
+
+              <span class="btn-regular">Solicitar&nbsp;</span>
+              <span class="btn-bold">Proposta</span>
+            </span>
+          </button>
+
+          <!-- wrapper do ponteiro: JS controla quando animar.
+               Data-attributes configuráveis:
+               - data-trigger: "intersection" | "timer" (padrão: intersection)
+               - data-start-delay: atraso em ms antes de começar a animação (padrão: 300)
+               - data-extra-distance: valor em px adicional para aumentar a distância inicial (padrão: 120)
+               Você também pode sobrescrever CSS vars inline, ex:
+               style="--pointer-right: -10px; --pointer-top: 8px;"
+          -->
+          <div id="pointer-wrap" class="pointer-wrap" aria-hidden="true" data-trigger="intersection"
+            data-start-delay="100" data-extra-distance="140" style="--pointer-right: -100px; --pointer-top: 8px;">
+            <img id="pointer" src="{{ url_for('static', filename='images/corpo/imagens/ponteiro_mouser.svg') }}" alt=""
+              class="pointer-img" width="190" height="245">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== JS: entrada do ponteiro vindo do canto inferior-direito, controle de delay/trigger e reduced-motion ===== -->
+  <script>
+    (function () {
+      const pointerWrap = document.getElementById('pointer-wrap');
+      const pointerImg = document.getElementById('pointer');
+      const section = document.getElementById('bloco-5');
+
+      if (!pointerWrap || !pointerImg || !section) return;
+
+      // Default configuration (pode ser alterado via data-attributes no elemento #pointer-wrap)
+      const cfg = {
+        trigger: pointerWrap.dataset.trigger || 'intersection', // 'intersection' | 'timer'
+        startDelay: parseInt(pointerWrap.dataset.startDelay ?? pointerWrap.dataset.startDelay === undefined ? 300 : pointerWrap.dataset.startDelay, 10) || 300, // ms
+        extraDistance: parseFloat(pointerWrap.dataset.extraDistance || 140), // px extra para a distância inicial (quanto maior, mais "de longe")
+        intersectionThreshold: 0.08 // threshold para IntersectionObserver
+      };
+
+      // Se reduzir movimento, não animar entrada (coloca ponteiro na posição final)
+      function prefersReduced() {
+        return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      }
+
+      // Esconde em telas pequenas (mesma lógica do CSS responsivo)
+      const START_BREAKPOINT_HIDE = 520;
+      function shouldShowPointer() {
+        return window.innerWidth > START_BREAKPOINT_HIDE && !prefersReduced();
+      }
+
+      // calcula deslocamento inicial necessário para que o elemento pareça vir do canto inferior-direito da viewport
+      // e aplica o transform inicial (fora da tela). Não inicia a animação — apenas "prepara".
+      function preparePointerStart() {
+        // garantir que o pointerWrap está renderizado em sua posição final para calcular boundingRect
+        pointerWrap.style.transition = 'none';
+        pointerWrap.classList.remove('entered');
+        pointerWrap.classList.add('prepared');
+
+        // força reflow para garantir valores corretos
+        const rect = pointerWrap.getBoundingClientRect();
+        const viewportW = window.innerWidth;
+        const viewportH = window.innerHeight;
+
+        // ponto bottom-right da caixa final do ponteiro
+        const elemRight = rect.right;
+        const elemBottom = rect.bottom;
+
+        // vetor do bottom-right da viewport até o bottom-right do elemento (pode ser negativo)
+        const dx = viewportW - elemRight;
+        const dy = viewportH - elemBottom;
+
+        // queremos que o ponteiro inicie no canto inferior-direito da viewport -> translate inicial: (dx + extra, dy + extra)
+        // se dx/dy já forem positivos (o elemento está dentro da viewport), o valor final será positivo, deslocando-o para fora.
+        // adicionamos extraDistance para aumentar o efeito de "vir de mais longe".
+        const startX = (dx + cfg.extraDistance);
+        const startY = (dy + cfg.extraDistance);
+
+        // aplicar transform inicial (mantemos a rotação -12deg)
+        // usamos translate(Xpx, Ypx) com valores positivos para deslocar em direção ao canto inferior-direito do viewport
+        pointerWrap.style.transform = `translate(${startX}px, ${startY}px)`;
+        pointerWrap.style.opacity = '1'; // garantir sempre 100% opacidade como solicitado
+
+        // não iniciar bobbing ainda; só após a entrada terminar
+        pointerImg.classList.remove('bob');
+      }
+
+      // inicia a animação para a posição final (translate -> 0,0) com o timing configurado
+      function startPointerEntry() {
+        // se prefere reduced-motion, não animar: apenas coloca na posição final
+        if (prefersReduced()) {
+          pointerWrap.style.transition = 'none';
+          pointerWrap.style.transform = 'translate(0, 0)';
+          pointerImg.classList.add('bob');
+          pointerWrap.classList.add('entered');
+          return;
+        }
+
+        // definir transição (duração e easing configuráveis via CSS vars / defaults)
+        const duration = getComputedStyle(document.documentElement).getPropertyValue('--pointer-duration') || '0.8s';
+        const ease = getComputedStyle(document.documentElement).getPropertyValue('--pointer-ease') || 'cubic-bezier(.2, .9, .3, 1)';
+        const startDelayCss = (cfg.startDelay || 0) + 'ms';
+
+        // aplicar transição dinamicamente
+        pointerWrap.style.transition = `transform ${duration.trim()} ${ease.trim()} ${startDelayCss}, opacity 120ms linear ${startDelayCss}`;
+        // força reflow para garantir a transição seja aplicada (ler layout)
+        void pointerWrap.offsetWidth;
+
+        // iniciar a animação -> ir para posição final (0,0)
+        // (mantemos rotação dentro .pointer-img)
+        requestAnimationFrame(() => {
+          pointerWrap.style.transform = 'translate(0, 0)';
+        });
+
+        // quando terminar a transição adiciona o "bob"
+        const onTransitionEnd = (e) => {
+          if (e.propertyName && e.propertyName.indexOf('transform') === -1) return;
+          pointerImg.classList.add('bob');
+          pointerWrap.classList.add('entered');
+          pointerWrap.removeEventListener('transitionend', onTransitionEnd);
+        };
+        pointerWrap.addEventListener('transitionend', onTransitionEnd);
+      }
+
+      // inicializa observador de interseção ou timer, conforme cfg.trigger
+      let observer = null;
+      function initTrigger() {
+        // reset display/visibility conforme breakpoint/reduce-motion
+        if (!shouldShowPointer()) {
+          // esconder/neutralizar se tela pequena ou reduced-motion
+          pointerWrap.style.display = 'none';
+          return;
+        } else {
+          pointerWrap.style.display = '';
+        }
+
+        // preparar ponto inicial
+        preparePointerStart();
+
+        if (cfg.trigger === 'timer') {
+          // start after configured delay (startDelay) from load/prepare
+          setTimeout(() => {
+            startPointerEntry();
+          }, cfg.startDelay);
+        } else {
+          // default: 'intersection'
+          // usar IntersectionObserver para disparar quando section aparecer
+          if ('IntersectionObserver' in window) {
+            observer && observer.disconnect();
+            observer = new IntersectionObserver((entries, obs) => {
+              entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                  // aguardar o delay configurado (reaproveita cfg.startDelay)
+                  setTimeout(() => startPointerEntry(), cfg.startDelay);
+                  obs.disconnect();
+                }
+              });
+            }, { threshold: cfg.intersectionThreshold });
+            observer.observe(section);
+          } else {
+            // fallback: se não suportar IO, start por timer
+            setTimeout(() => startPointerEntry(), cfg.startDelay);
+          }
+        }
+      }
+
+      // recomputar ao redimensionar (reaplicar posição inicial se ainda não entrou)
+      let resizeDebounce = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeDebounce);
+        resizeDebounce = setTimeout(() => {
+          if (!shouldShowPointer()) {
+            pointerWrap.style.display = 'none';
+            return;
+          } else {
+            pointerWrap.style.display = '';
+          }
+          // se ainda não entrou (sem classe entered), recalcula start
+          if (!pointerWrap.classList.contains('entered')) {
+            preparePointerStart();
+            // re-inicializa trigger para que intersectionObserver observe a seção correta em novo tamanho
+            if (cfg.trigger === 'intersection') initTrigger();
+          }
+        }, 120);
+      });
+
+      // ouvir mudanças em prefers-reduced-motion
+      if (window.matchMedia) {
+        const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const mqHandler = () => {
+          if (mq.matches) {
+            // modo reduzido -> parar animações e posicionar final
+            pointerWrap.style.transition = 'none';
+            pointerWrap.style.transform = 'translate(0, 0)';
+            pointerImg.classList.add('bob'); // bob é seguro? em reduced-motion removemos bobbing via CSS @media - mas aqui garantimos
+          } else {
+            // recomputar comportamento padrão
+            preparePointerStart();
+            initTrigger();
+          }
+        };
+        if ('addEventListener' in mq) mq.addEventListener('change', mqHandler);
+        else if ('addListener' in mq) mq.addListener(mqHandler);
+      }
+
+      // iniciar na load
+      window.addEventListener('load', () => {
+        // se prefers-reduced-motion -> posiciona final sem animação
+        if (prefersReduced()) {
+          pointerWrap.style.transition = 'none';
+          pointerWrap.style.transform = 'translate(0,0)';
+          pointerImg.classList.remove('bob');
+          pointerWrap.classList.add('entered');
+          return;
+        }
+
+        // preparar e iniciar trigger
+        initTrigger();
+      });
+
+      // exposição (console) para debugging rápido: você pode executar no console:
+      // pointerWrap.dataset.startDelay = "800"; pointerWrap.dataset.extraDistance = "200"; initTrigger();
+      window._pointerDebug = {
+        pointerWrap,
+        pointerImg,
+        cfg,
+        preparePointerStart,
+        startPointerEntry,
+        initTrigger
+      };
+
+    })();
+  </script>
+</body>
+
+</html>

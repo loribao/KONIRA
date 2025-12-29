@@ -1,0 +1,179 @@
+<!-- frame-top.html (atualizado: três pontinhos aparecem a partir de <800px) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index/bloco9/interface-vscode/frame-top.css') }}">
+
+<div class="top-bar" role="toolbar" aria-label="Barra superior estilo VS Code">
+  <div class="top-left" role="group" aria-label="Aplicativo e menu principal">
+    <div class="app-icon" title="App">
+      <img src="static/images/corpo/bloco9/icons/top/vscode.svg" alt="VS Code logo" width="20" height="20" />
+    </div>
+
+    <nav class="menu-items" aria-hidden="false" role="menubar" aria-label="Menu">
+      <button role="menuitem" tabindex="0">Arquivo</button>
+      <button role="menuitem" tabindex="0">Editar</button>
+      <button role="menuitem" tabindex="0">Seleção</button>
+      <button role="menuitem" tabindex="0">Ver</button>
+      <!-- Itens que somem a partir de 800px -->
+      <button role="menuitem" tabindex="0" class="menu-hide-xs">Acessar</button>
+      <button role="menuitem" tabindex="0">Executar</button>
+      <button role="menuitem" tabindex="0" class="menu-hide-xs">Terminal</button>
+      <button role="menuitem" tabindex="0" class="menu-hide-xs">Ajuda</button>
+    </nav>
+
+    <button class="menu-more" aria-haspopup="true" aria-expanded="false" aria-controls="overflow-menu" title="Mais">
+      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+        <circle cx="5" cy="12" r="1.8"></circle>
+        <circle cx="12" cy="12" r="1.8"></circle>
+        <circle cx="19" cy="12" r="1.8"></circle>
+      </svg>
+      <span class="sr-only">Mais opções</span>
+    </button>
+
+    <div id="overflow-menu" class="overflow-dropdown" role="menu" aria-hidden="true" tabindex="-1"></div>
+  </div>
+
+  <div class="top-center" role="group" aria-label="Área de workspace e busca">
+    <div class="top-search" role="search" aria-label="Pesquisar arquivos e comandos">
+      <img src="static/images/corpo/bloco9/icons/top/search.svg" alt="" aria-hidden="true" width="16" height="16" />
+      <input type="search" placeholder="Pesquisar (Ctrl+P / Ctrl+Shift+P)" aria-label="Pesquisar" />
+    </div>
+  </div>
+
+  <div class="top-right" role="group" aria-label="Ações rápidas e perfil">
+    <div class="action-list" role="toolbar" aria-label="Ações rápidas">
+      <button class="action-btn" title="Source Control" aria-label="Source Control" tabindex="0">
+        <img src="static/images/corpo/bloco9/icons/top/personalizar.svg" alt="" />
+      </button>
+
+      <button class="action-btn" title="Extensions" aria-label="Extensões" tabindex="0">
+        <img src="static/images/corpo/bloco9/icons/top/lateral.svg" alt="" />
+      </button>
+
+      <button class="action-btn badge" title="Notificações" aria-label="Notificações" tabindex="0" d>
+        <img src="static/images/corpo/bloco9/icons/top/inferior.svg" alt="" />
+      </button>
+
+      <button class="action-btn" title="Configurações" aria-label="Configurações" tabindex="0">
+        <img src="static/images/corpo/bloco9/icons/top/outra_lateral.svg" alt="" />
+      </button>
+    </div>
+
+    <div style="width:8px;"></div>
+
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    const searchInput = document.querySelector('.top-search input');
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        if (searchInput) searchInput.focus();
+      }
+    });
+
+    const moreBtn = document.querySelector('.menu-more');
+    const overflowMenu = document.getElementById('overflow-menu');
+
+    function populateOverflow() {
+      overflowMenu.innerHTML = '';
+      const hidden = document.querySelectorAll('.menu-items .menu-hide-xs');
+      hidden.forEach((btn) => {
+        const clone = btn.cloneNode(true);
+        clone.removeAttribute('disabled');
+        clone.setAttribute('role', 'menuitem');
+        clone.tabIndex = 0;
+        clone.addEventListener('click', (ev) => {
+          closeOverflow();
+          btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        });
+        clone.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter' || ev.key === ' ') {
+            ev.preventDefault();
+            clone.click();
+          }
+        });
+        overflowMenu.appendChild(clone);
+      });
+      if (overflowMenu.children.length === 0) {
+        moreBtn.style.display = 'none';
+      } else {
+        // let CSS decide visibility; ensure displayed if needed
+        if (getComputedStyle(moreBtn).display === 'none') { /* nothing */ }
+        else moreBtn.style.display = '';
+      }
+    }
+
+    function openOverflow() {
+      overflowMenu.classList.add('open');
+      overflowMenu.setAttribute('aria-hidden', 'false');
+      moreBtn.setAttribute('aria-expanded', 'true');
+      const first = overflowMenu.querySelector('[role="menuitem"]');
+      if (first) first.focus();
+      document.addEventListener('click', onDocClick);
+      document.addEventListener('keydown', onDocKeydown);
+    }
+
+    function closeOverflow() {
+      overflowMenu.classList.remove('open');
+      overflowMenu.setAttribute('aria-hidden', 'true');
+      moreBtn.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('click', onDocClick);
+      document.removeEventListener('keydown', onDocKeydown);
+    }
+
+    function toggleOverflow() {
+      if (overflowMenu.classList.contains('open')) closeOverflow();
+      else openOverflow();
+    }
+
+    function onDocClick(e) {
+      if (!overflowMenu.contains(e.target) && e.target !== moreBtn) {
+        closeOverflow();
+      }
+    }
+    function onDocKeydown(e) {
+      if (e.key === 'Escape') {
+        closeOverflow();
+        moreBtn.focus();
+      }
+    }
+
+    populateOverflow();
+
+    if (moreBtn) {
+      moreBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        toggleOverflow();
+      });
+      moreBtn.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          toggleOverflow();
+        } else if (ev.key === 'ArrowDown') {
+          ev.preventDefault();
+          openOverflow();
+        }
+      });
+    }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(populateOverflow, 120);
+    });
+
+    const ws = document.querySelector('.workspace-pill');
+    if (ws) {
+      ws.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          const expanded = ws.getAttribute('aria-expanded') === 'true';
+          ws.setAttribute('aria-expanded', (!expanded).toString());
+        }
+      });
+    }
+  })();
+</script>

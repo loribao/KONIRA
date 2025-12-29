@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <style>
+    @import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+
+    * {
+      -webkit-font-smoothing: antialiased;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0px;
+      height: 100%;
+    }
+
+    /* a blue color as a generic focus style */
+    button:focus-visible {
+      outline: 2px solid #4a90e2 !important;
+      outline: -webkit-focus-ring-color auto 5px !important;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    /* ------------------ EXISTING SITE STYLES (unchanged) ------------------ */
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: linear-gradient(119deg, rgba(37, 37, 37, 1) 0%, rgba(20, 20, 20, 1) 100%);
+      border-radius: 50px 50px 0px 0px;
+    }
+
+    .main-container .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 50px 10vw;
+      position: relative;
+      align-self: stretch;
+      width: 100%;
+      flex: 0 0 auto;
+    }
+
+    .main-container .logo-and-text {
+      display: flex;
+      flex-direction: column;
+      width: 312.25px;
+      align-items: flex-start;
+      gap: 27px;
+      position: relative;
+    }
+
+    .main-container .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 26px;
+      position: relative;
+      align-self: stretch;
+      width: 100%;
+      flex: 0 0 auto;
+    }
+
+    .main-container .logo {
+      position: relative;
+      width: 28.35px;
+      height: 33px;
+    }
+
+    .main-container .text-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+      position: relative;
+      align-self: stretch;
+      width: 100%;
+      flex: 0 0 auto;
+    }
+
+    .main-container .main-text {
+      position: relative;
+      align-self: stretch;
+      margin-top: -1.00px;
+      font-family: "Montserrat-SemiBold", Helvetica;
+      font-weight: 600;
+      color: #ffffff;
+      font-size: 20px;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+
+    .main-container .sub-text {
+      position: relative;
+      align-self: stretch;
+      font-family: "Montserrat-Regular", Helvetica;
+      font-weight: 400;
+      color: #ffffff;
+      font-size: 12px;
+      letter-spacing: 0;
+      line-height: 10.6px;
+    }
+
+
+    .main-container .button {
+      all: unset;
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .main-container .logo-botton {
+      position: relative;
+      width: 13.74px;
+      height: 16px;
+    }
+
+    .main-container .button-text {
+      align-items: center;
+      justify-content: center;
+      width: 134.01px;
+      height: 28px;
+      margin-top: -1.00px;
+      font-family: "Montserrat-Regular", Helvetica;
+      font-weight: 400;
+      color: #ffffff;
+      font-size: 10px;
+      letter-spacing: 0;
+      line-height: normal;
+      display: flex;
+      position: relative;
+    }
+
+    .main-container .links-container {
+      flex-direction: column;
+      width: 652.28px;
+      align-items: flex-start;
+      gap: 40px;
+      display: flex;
+      position: relative;
+    }
+
+    .main-container .links-row {
+      align-items: center;
+      gap: 65px;
+      align-self: stretch;
+      width: 100%;
+      flex: 0 0 auto;
+      display: flex;
+      position: relative;
+    }
+
+    .main-container .links-column {
+      width: 153px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 40px;
+      position: relative;
+    }
+
+    .main-container .link {
+      position: relative;
+      align-self: stretch;
+      margin-top: -1.00px;
+      font-family: "Montserrat-Regular", Helvetica;
+      font-weight: 300;
+      color: #ffffffad;
+      font-size: 16px;
+      letter-spacing: 0;
+      line-height: 14.1px;
+    }
+
+    .main-container .text-wrapper {
+      position: relative;
+      align-self: stretch;
+      font-family: "Montserrat-Regular", Helvetica;
+      font-weight: 300;
+      color: #ffffffad;
+      font-size: 16px;
+      letter-spacing: 0;
+      line-height: 14.1px;
+    }
+
+    .main-container .div {
+      width: 197.28px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 40px;
+      position: relative;
+    }
+
+    .main-container .links-column-2 {
+      width: 172px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 40px;
+      position: relative;
+    }
+
+    .main-container .careers-link {
+      position: relative;
+      align-self: stretch;
+      height: 18px;
+      font-family: "Montserrat-Regular", Helvetica;
+      font-weight: 300;
+      color: #ffffffad;
+      font-size: 16px;
+      letter-spacing: 0;
+      line-height: 14.1px;
+    }
+
+    /* --------------------------------------------------------------------- */
+
+    /* ------------------ NEW FOOTER STYLES (inside .main-container) ------------------ */
+    .main-container .footer-container {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 22px 28px;
+      width: 100%;
+      flex: 0 0 auto;
+      background: linear-gradient(180deg, #121212 0%, #0b0b0b 100%);
+      position: relative;
+      align-self: stretch;
+      /* REMOVE any border-radius here (user requested) */
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.02);
+      gap: 18px;
+    }
+
+    /* Isolated footer elements (prefixed to reduce conflicts) */
+    .site-footer__links {
+      display: flex;
+      flex-direction: column;
+      width: 60%;
+      align-items: flex-start;
+      gap: 8px;
+      min-width: 180px;
+    }
+
+    .site-footer__nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .site-footer__link {
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 13px;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      padding: 6px 4px;
+      border-radius: 6px;
+      transition: color .12s ease, transform .12s ease;
+    }
+
+    .site-footer__link:hover,
+    .site-footer__link:focus {
+      color: #ffffff;
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    .site-footer__disclaimer {
+      font-family: "Montserrat-Italic", Helvetica;
+      font-style: italic;
+      color: rgba(255, 255, 255, 0.45);
+      font-size: 11px;
+      margin-top: 6px;
+    }
+
+    .site-footer__social-language {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      min-width: 180px;
+    }
+
+    .site-social {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .site-social__btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    .site-social__btn:hover,
+    .site-social__btn:focus {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.03);
+      outline: none;
+    }
+
+    .site-social__icon {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+
+    .site-language {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 12px;
+      color: #cfcfcf;
+      font-size: 12px;
+    }
+
+    .site-language__icon {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    .site-language__chev {
+      width: 10px;
+      height: 6px;
+      display: block;
+      opacity: .9;
+    }
+
+    @media (max-width: 880px) {
+      .main-container .footer-container {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 18px;
+        gap: 14px;
+      }
+
+      .site-footer__links {
+        width: 100%;
+      }
+
+      .site-footer__social-language {
+        justify-content: space-between;
+        width: 100%;
+      }
+    }
+
+
+
+        /* Escopo: somente o botão com a classe button--simulacao dentro de .cta_2 */
+    .cta_2 .button.button--simulacao {
+      border-radius: 10px;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;            /* espaçamento entre ícone e texto */
+      cursor: pointer;
+    }
+
+    /* Ajustes internos (texto / logo) */
+    .cta_2 .button.button--simulacao .logo-botton {
+      width: 16px;
+      height: auto;
+      flex-shrink: 0;
+    }
+
+    .cta_2 .button.button--simulacao .button-text {
+      font-weight: 200;
+      font-size: 12px;
+      color: #fff;          /* só afeta esse botão */
+    }
+
+
+    /* ------------------------------------------------------------------------- */
+  </style>
+</head>
+
+<body>
+  <div class="main-container">
+    <div class="header-container">
+      <div class="logo-and-text">
+        <div class="logo-container">
+          <!-- alterei src para a pasta única indicada -->
+          <img class="logo" src="static/images/corpo/bloco11/logo.svg" alt="Logo" />
+          <div class="text-container">
+            <p class="main-text">We growing up your business <br />with personal IA manager.</p>
+            <div class="sub-text">Maxwell, 2023.</div>
+          </div>
+        </div>
+
+        <div class="cta_2">
+          <button class="button button--simulacao" aria-label="Agendar uma Simulação">
+            <img class="logo-botton" src="static/images/corpo/bloco11/logo-botton.svg" alt="" />
+            <div class="button-text">Agendar uma Simulação</div>
+          </button>
+        </div>
+
+      </div>
+
+      <div class="links-container">
+        <div class="links-row">
+          <div class="links-column">
+            <div class="link">Metodologia</div>
+            <div class="text-wrapper">Escopo de Serviços</div>
+          </div>
+
+          <div class="div">
+            <div class="link">White Papers: Red Team</div>
+            <div class="text-wrapper">Relatórios de Exploração</div>
+          </div>
+
+          <div class="links-column-2">
+            <div class="link">Automação de Testes</div>
+            <div class="text-wrapper">Casos de Sucesso</div>
+          </div>
+        </div>
+
+        <div class="careers-link">Carreiras (Junte-se ao Ataque!)</div>
+      </div>
+    </div>
+
+    <!-- footer (mantido dentro de .main-container conforme solicitado) -->
+    <div class="footer-container">
+      <div class="footer-links site-footer__links">
+        <div class="navbar site-footer__nav" role="navigation" aria-label="Footer navigation">
+          <!-- links com prefixo de classe para reduzir conflito -->
+          <a class="footer-link site-footer__link" href="#" title="© 2025 Konira, inc.">© 2025 Konira, inc.</a>
+          <a class="footer-link-2 site-footer__link" href="#" title="Termos e Privacidade">Termos · Privacidade</a>
+          <a class="footer-link site-footer__link" href="#" title="Mapa do Site">Mapa do Site</a>
+          <a class="footer-link site-footer__link" href="#" title="O que é Konira">O que é Konira</a>
+          <a class="footer-link site-footer__link" href="#" title="Gerenciar cookies">Gerenciar cookies</a>
+        </div>
+
+        <p class="footer-disclaimer site-footer__disclaimer">Não compartilhar minhas informações pessoais</p>
+      </div>
+
+      <div class="social-and-language site-footer__social-language">
+        <div class="social-icons site-social" aria-label="Redes sociais">
+          <!-- todos os ícones apontam para a mesma pasta; só altere o nome do arquivo se precisar -->
+          <a class="site-social__btn" href="#" aria-label="X / Twitter" title="X / Twitter">
+            <img class="site-social__icon" src="static/images/corpo/bloco11/x-logo.svg" alt="X logo" />
+          </a>
+
+          <a class="site-social__btn" href="#" aria-label="LinkedIn" title="LinkedIn">
+            <img class="site-social__icon" src="static/images/corpo/bloco11/linkedin-logo.svg" alt="LinkedIn logo" />
+          </a>
+
+          <a class="site-social__btn" href="#" aria-label="Instagram" title="Instagram">
+            <img class="site-social__icon" src="static/images/corpo/bloco11/instagram-logo.svg" alt="Instagram logo" />
+          </a>
+
+          <a class="site-social__btn" href="#" aria-label="GitHub" title="GitHub">
+            <img class="site-social__icon" src="static/images/corpo/bloco11/github-logo.svg" alt="GitHub logo" />
+          </a>
+        </div>
+
+        <div class="language-container site-language" role="group" aria-label="Selecionar idioma">
+          <img class="idioma site-language__icon" src="static/images/corpo/bloco11/idioma.svg" alt="Ícone idioma" />
+          <div class="language-text" aria-hidden="true">Português (Brasil)</div>
+          <img class="seta site-language__chev" src="static/images/corpo/bloco11/seta.svg" alt="" />
+        </div>
+      </div>
+    </div>
+    <!-- fim do footer -->
+  </div>
+</body>
+
+</html>

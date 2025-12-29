@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Frame Bottom — Terminal Autostart (Konira DevSec Tips)</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index/bloco9/interface-vscode/frame-bottom.css') }}">
+</head>
+
+<body>
+
+  <div class="frame-bottom-container">
+    <div class="bottom-panel" role="region" aria-label="Painel inferior - terminal">
+      <div class="bottom-tabs" role="tablist" aria-label="Tabs do painel inferior">
+        <div class="tabs-left" role="presentation">
+          <div class="tab" role="tab" tabindex="0" data-key="problemas">Problemas</div>
+          <div class="tab" role="tab" tabindex="0" data-key="saida">Saída</div>
+          <div class="tab" role="tab" tabindex="0" data-key="console">Console de depuração</div>
+          <div class="tab active" role="tab" tabindex="0" data-key="terminal" aria-selected="true">Terminal</div>
+          <div class="tab" role="tab" tabindex="0" data-key="portas">Portas</div>
+        </div>
+
+        <div class="tabs-right" role="toolbar" aria-label="Ações do painel inferior">
+          <button class="icon-btn" class="icon-mask" title="Barra" aria-label="Alternar barra">
+            <img class="icon" src="{{url_for('static', filename='images/corpo/bloco9/icons/bottom/barra.svg') }}" alt="Ícone: Barra" />
+          </button>
+
+          <button class="icon-btn" class="icon-mask" title="Cantos" aria-label="Alternar cantos">
+            <img class="icon" src="{{url_for('static', filename='images/corpo/bloco9/icons/bottom/cantos.svg') }}" alt="Ícone: Cantos" />
+          </button>
+
+          <button class="icon-btn" class="icon-mask" title="Fechar" aria-label="Fechar painel">
+            <img class="icon" src="{{url_for('static', filename='images/corpo/bloco9/icons/bottom/x.svg') }}" alt="Ícone: Fechar" />
+          </button>
+
+
+          
+        </div>
+
+      </div>
+
+      <div class="bottom-content" id="bottom-content">
+        <div class="bottom-left" id="bottom-left">
+          <div class="terminal" id="terminal" aria-live="polite" role="log" aria-atomic="false" tabindex="0">
+            <div class="term-row">
+              <div class="term-meta">15:06:06.524</div>
+              <div class="term-prompt">PS C:\Users\Malcuth\project&gt;</div>
+              <div class="term-output">Iniciando terminal interativo...</div>
+            </div>
+          </div>
+          <button class="scroll-to-bottom" id="scrollToBottom">Ir para final</button>
+        </div>
+
+        <div class="bottom-side" id="bottom-side">
+          <div><strong>Informações rápidas</strong></div>
+          <div id="info-status">status: ok</div>
+          <div id="mouse-pos">Mouse: modo dicas DevSec</div>
+          <div id="last-action">Última ação: —</div>
+          <div style="margin-top:auto;color:var(--muted);font-size:12px;">Painel horizontal: registrando interações e
+            dicas</div>
+        </div>
+      </div>
+
+      <div class="status-bar" role="status">
+        <div class="status-item">master</div>
+        <div class="status-item">UTF-8</div>
+        <div class="status-item">LF</div>
+        <div style="margin-left:auto;padding-right:12px;color:var(--muted)">Linha 12, Col 4</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      // --- CONFIGURAÇÃO (ajuste para reduzir mensagens / progress bars) ---
+      const MAX_ROWS = 5;               // quantas linhas manter no terminal (reduza para menos)
+      const MIN_TICK_MS = 2500;         // tempo mínimo entre ticks (aumentar = menos mensagens)
+      const MAX_TICK_MS = 6000;         // tempo máximo entre ticks
+
+      // Flags para controlar features com facilidade
+      const ENABLE_DOT_PROGRESS = true; // barras tipo showDotProgress()
+      const ENABLE_PROGRESS = false;    // "instalando-agent" — definir false para desligar
+      const ENABLE_ASCII = true;        // banners ASCII (se a lista estiver vazia, nada será mostrado)
+
+      // Probabilidades relativas (ajuste para reduzir tipos de mensagens)
+      const PROB_EXPLAIN = 0.18;  // explicadores (devsec>)
+      const PROB_TIP = 0.12;  // dicas (devsec>)
+      const PROB_ACTION = 0.05;  // ações (action>)
+      const PROB_DOT = 0.45;  // dot progress (showDotProgress)
+      const PROB_ASCII = 0.10;  // mostrar ascii (showKoniraAscii)
+      // probabilidade de "instalando-agent" aparecer (controle separado)
+      const PROB_PROGRESS_AGENT = 0.01; // 1% por tick (antes era 6%)
+
+      // --- CSS mínimo para garantir preservação do ASCII art ---
+      (function injectCss() {
+        const css = `
+  .term-row.compact .term-meta,
+  .term-row.compact .term-prompt {
+    display: none;
+  }
+  .term-row.compact .term-output {
+    font-size: 0.98rem;
+    line-height: 1;
+  }
+  .konira-ascii-container pre.raw-ascii.ascii,
+  .code-raw-progress {
+    font-family: monospace;
+    white-space: pre;
+    line-height: 1;
+    margin: 0;
+  }
+  .konira-ascii-container pre.raw-ascii.ascii {
+    font-family: monospace;
+    line-height: 1;
+    font-size: 0.88rem;
+    white-space: pre;
+    margin: 0;
+  }
+  .kw-devsec { color: #ff6b6b; font-weight:600; }
+  .kw-konira { color: #ff2b2b; font-weight:600; }
+    `;
+        const s = document.createElement('style');
+        s.textContent = css;
+        document.head.appendChild(s);
+      })();
+
+      if (!Array.isArray(window.__pendingLines)) window.__pendingLines = [];
+
+      if (typeof window.appendLine !== 'function') {
+        window.appendLine = function (text, cls) { window.__pendingLines.push({ text: text, cls: cls }); };
+      }
+
+      const terminal = document.getElementById('terminal');
+      const scrollBtn = document.getElementById('scrollToBottom');
+      const mousePosEl = document.getElementById('mouse-pos');
+      const lastActionEl = document.getElementById('last-action');
+
+      if (!terminal) {
+        console.warn('frame-bottom: #terminal não encontrado. Abortando lógica do terminal.');
+        return;
+      }
+
+      const MAX_ROWS_LOCAL = typeof MAX_ROWS === 'number' ? MAX_ROWS : 6;
+      const MIN_TICK_MS_LOCAL = typeof MIN_TICK_MS === 'number' ? MIN_TICK_MS : 1000;
+      const MAX_TICK_MS_LOCAL = typeof MAX_TICK_MS === 'number' ? MAX_TICK_MS : 3000;
+
+      const MAX_ROWS_CONST = MAX_ROWS_LOCAL;
+      const MIN_TICK_CONST = MIN_TICK_MS_LOCAL;
+      const MAX_TICK_CONST = MAX_TICK_MS_LOCAL;
+
+      const AUTO_SCROLL_THRESHOLD = 72;
+      let lastMouseTipAt = 0;
+      const MOUSE_TIP_THROTTLE_MS = 2000;
+
+      let userScrolledUp = false;
+      let scrollRaf = null;
+      function isAtBottom() {
+        return (terminal.scrollHeight - (terminal.scrollTop + terminal.clientHeight)) <= AUTO_SCROLL_THRESHOLD;
+      }
+      function updateScrollButtonVisibility() {
+        if (!scrollBtn) return;
+        scrollBtn.style.display = userScrolledUp ? 'inline-block' : 'none';
+      }
+      terminal.addEventListener('scroll', () => {
+        userScrolledUp = !isAtBottom();
+        updateScrollButtonVisibility();
+      }, { passive: true });
+      if (scrollBtn) {
+        scrollBtn.addEventListener('click', () => {
+          terminal.scrollTo({ top: terminal.scrollHeight, behavior: 'smooth' });
+          userScrolledUp = false;
+          updateScrollButtonVisibility();
+        });
+      }
+      function scheduleScrollToBottom(force = false) {
+        if (userScrolledUp && !force) return;
+        if (scrollRaf) cancelAnimationFrame(scrollRaf);
+        scrollRaf = requestAnimationFrame(() => {
+          terminal.scrollTop = terminal.scrollHeight;
+          scrollRaf = null;
+        });
+      }
+
+      let lastAppendedNormalized = null;
+      let lastAppendedAt = 0;
+      let __rowsCreatedThisTick = 0;
+
+      function normalizeForDedupe(s) {
+        return String(s || '')
+          .replace(/<[^>]*>/g, '')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .slice(0, 240);
+      }
+
+      function pruneRows() {
+        const rows = terminal.querySelectorAll('.term-row');
+        while (rows.length > MAX_ROWS_CONST) {
+          const first = terminal.querySelector('.term-row');
+          if (!first) break;
+          first.remove();
+          const updated = terminal.querySelectorAll('.term-row');
+          if (updated.length <= MAX_ROWS_CONST) break;
+        }
+      }
+
+      function escapeHtml(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      function highlightKeywordsHtml(s) {
+        let t = escapeHtml(s);
+        t = t.replace(/\b(devsec)\b/ig, '<span class="kw-devsec">$1</span>');
+        t = t.replace(/\b(konira)\b/ig, '<span class="kw-konira">$1</span>');
+        return t;
+      }
+
+      function createRow({ prompt = '', output = '', meta = null, cls = '' } = {}) {
+        const row = document.createElement('div');
+        row.className = 'term-row';
+
+        const metaEl = document.createElement('div');
+        metaEl.className = 'term-meta';
+        metaEl.textContent = meta || (new Date()).toLocaleTimeString('pt-BR') + '.' + String((new Date()).getMilliseconds()).padStart(3, '0');
+
+        const promptEl = document.createElement('div');
+        promptEl.className = 'term-prompt';
+        promptEl.textContent = prompt || '';
+
+        const outEl = document.createElement('div');
+        outEl.className = 'term-output';
+
+        const isRawAsciiPre = /<pre[^>]*class="raw-ascii"[^>]*>/i.test(output);
+        const hasTrustedHtml = /<\/?(span|pre|code|div|strong|em|b|i|u|small|br|p|a)(\s|>)/i.test(output);
+
+        if (isRawAsciiPre || hasTrustedHtml) outEl.innerHTML = output;
+        else outEl.innerHTML = highlightKeywordsHtml(String(output));
+
+        if (cls) outEl.classList.add(cls);
+
+        row.appendChild(metaEl);
+        row.appendChild(promptEl);
+        row.appendChild(outEl);
+        terminal.appendChild(row);
+
+        __rowsCreatedThisTick++;
+
+        pruneRows();
+        scheduleScrollToBottom();
+        return { row, outEl };
+      }
+
+      function realAppendLine(text, cls) {
+        let rawText = '';
+        let prompt = '';
+        if (typeof text === 'object' && text !== null) {
+          rawText = text.text || text.output || '';
+          prompt = text.prompt || '';
+        } else {
+          const m = String(text).match(/^([^\s>]{1,20}>)(?:\s*)([\s\S]*)$/);
+          if (m) {
+            prompt = m[1];
+            rawText = m[2];
+          } else rawText = String(text);
+        }
+
+        const norm = normalizeForDedupe(rawText);
+        const now = Date.now();
+        if (norm && norm === lastAppendedNormalized && (now - lastAppendedAt) < 3500) {
+          return false;
+        }
+
+        const created = createRow({ prompt: prompt, output: rawText, cls: cls || '' });
+        lastAppendedNormalized = norm || null;
+        lastAppendedAt = now;
+        return created;
+      }
+
+      window.appendLine = function (text, cls) {
+        try { realAppendLine(text, cls); } catch (e) { console.warn('appendLine erro:', e); }
+      };
+
+      try {
+        if (Array.isArray(window.__pendingLines) && window.__pendingLines.length) {
+          while (window.__pendingLines.length) {
+            const it = window.__pendingLines.shift();
+            try { realAppendLine(it.text, it.cls); } catch (e) { console.warn(e); }
+          }
+        }
+      } catch (e) { console.warn(e); }
+
+      window.__terminal = window.__terminal || {};
+      window.__terminal.clear = function () { terminal.innerHTML = ''; };
+      window.__terminal.forceScroll = function () { scheduleScrollToBottom(true); };
+      window.__terminal.setAutoScroll = function (v) { userScrolledUp = !v; updateScrollButtonVisibility(); };
+      window.__terminal.getRows = function () { return terminal.querySelectorAll('.term-row').length; };
+
+      // --- ASCII banners (INTENCIONALMENTE VAZIA: usuário pediu para ignorar conteúdo da lista) ---
+      const KONIRA_ASCII_LIST = [
+`<pre class="raw-ascii ascii" style="font-family:monospace; line-height:1; font-size:0.88rem; white-space:pre; margin:0;">
+  <span style="color:#ff2b2b">                                    </span>
+  <span style="color:#ff3b3b">██ ▄█▀  ▄▄▄  ▄▄  ▄▄ ▄▄ ▄▄▄▄   ▄▄▄  </span>
+  <span style="color:#ff4d4d">████   ██▀██ ███▄██ ██ ██▄█▄ ██▀██ </span>
+  <span style="color:#ff2b2b">██ ▀█▄ ▀███▀ ██ ▀██ ██ ██ ██ ██▀██ </span>
+  <span style="color:#ff2b2b">                                    </span>
+  <span style="display:block; margin-top:6px; font-weight:700; color:#ffffff">KONIRA — DEVSEC LTDA</span>
+</pre>`,
+
+        `<pre class="raw-ascii ascii" style="font-family:monospace; line-height:1; font-size:0.88rem; white-space:pre; margin:0;">
+  <span style="color:#ffffff"> ____  __.            .__               </span>
+  <span style="color:#ffffff">|    |/ _|____   ____ |__|___________   </span>
+  <span style="color:#ffffff">|      &lt; /  _ \\ /    \\|  \\_  __ \\__  \\  </span>
+  <span style="color:#ffffff">|    |  (  &lt;_&gt; )   |  \\  ||  | \\// __ \\_</span>
+  <span style="color:#ffffff">|____|__ \\____/|___|  /__||__|  (____  /</span>
+  <span style="color:#ffffff">        \\/          \\/               \\/</span>
+  <span style="display:block; margin-top:6px; font-weight:700; color:#ff0d0d">DEVSEC — PROFISSIONAL &middot; KONIRA</span>
+</pre>`,
+
+        `<pre class="raw-ascii ascii" style="font-family:monospace; line-height:1; font-size:0.88rem; white-space:pre; margin:0;">
+  <span style="color:#ff4d4d">/$$   /$$                     /$$                   </span>
+  <span style="color:#ff4d4d">| $$  /$$/                    |__/                   </span>
+  <span style="color:#ff4d4d">| $$ /$$/   /$$$$$$  /$$$$$$$  /$$  /$$$$$$  /$$$$$$ </span>
+  <span style="color:#ff4d4d">| $$$$$/   /$$__  $$| $$__  $$| $$ /$$__  $$|____  $$</span>
+  <span style="color:#ff4d4d">| $$  $$  | $$  \\ $$| $$  \\ $$| $$| $$  \\__/ /$$$$$$$</span>
+  <span style="color:#ff4d4d">| $$\\  $$ | $$  | $$| $$  | $$| $$| $$      /$$__  $$</span>
+  <span style="color:#ff4d4d">| $$ \\  $$|  $$$$$$/| $$  | $$| $$| $$     |  $$$$$$$</span>
+  <span style="color:#ff4d4d">|__/  \\__/ \\______/ |__/  |__/|__/|__/      \\_______/</span>
+  <span style="display:block; margin-top:6px; font-weight:700; color:#ffffff">DEVSEC LTDA — Segurança Incorporada</span>
+</pre>`,
+
+        `<pre class="raw-ascii ascii" style="font-family:monospace; line-height:1; font-size:0.88rem; white-space:pre; margin:0;">
+  <span style="color:#ff3b3b">  )                            </span>
+  <span style="color:#ff3b3b">  ( /(                          </span>
+  <span style="color:#ff3b3b">  )\\())           (   (       )  </span>
+  <span style="color:#ff3b3b"> |((_ )\\  (    (    )\\  )(   ( /(  </span>
+  <span style="color:#ff3b3b"> |_ ((_) )\\   )\\ )((_)(()\\  )(_)) </span>
+  <span style="color:#ff3b3b"> | |/ / ((_) _(_/( (_) ((_)((_)_  </span>
+  <span style="color:#ff3b3b">   ' &lt; / _ \\| ' \\))| || '_|/ _\\\` | </span>
+  <span style="color:#ff3b3b">  _|\\_\\\\___/|_||_| |_||_|  \\__,_| </span>
+  <span style="display:block; margin-top:6px; font-weight:700; color:#ffffff">
+    KONIRA · DEVSEC — SOLUÇÕES
+  </span>
+</pre>`,
+
+
+        `<pre class="raw-ascii ascii" style="font-family:monospace; line-height:1; font-size:0.88rem; white-space:pre; margin:0;">
+  <span style="color:#ffffff"> __  __                                       </span>
+  <span style="color:#ffffff">/\\ \\ /\\ \\                  __                 </span>
+  <span style="color:#ffffff">\\ \\ \\/'/    ___     ___ /\\_\\  _ __    __     </span>
+  <span style="color:#ffffff"> \\ \\ , <    / __\\ /' _ \\ /\\ \\ /\\ '__\\/'__\\   </span>
+  <span style="color:#ffffff">  \\ \\ \\\\  /\\ \\L\\ \\/\\ \\/\\ \\ \\ \\ \\//\\ \\L\\.\\_ </span>
+  <span style="color:#ffffff">   \\ \\_\\ \\_\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\\\ \\__/.\\_\\</span>
+  <span style="color:#ffffff">    \\/_/\\/_/\\/___/  \\/_/\\/_/\\/_/\\/_/ \\/__/\\/_/</span>
+  <span style="display:block; margin-top:6px; font-weight:700; color:#ff0d0d">
+    DEVSEC LTDA - KONIRA ENTERPRISE SECURITY
+  </span>
+</pre>`
+
+
+
+      ];
+
+
+      function showKoniraAscii() {
+        if (!Array.isArray(KONIRA_ASCII_LIST) || KONIRA_ASCII_LIST.length === 0) {
+          // lista vazia: não faz nada — evita erros
+          return;
+        }
+        const idx = Math.floor(Math.random() * KONIRA_ASCII_LIST.length);
+        createRow({ prompt: '', output: `<div class="konira-ascii-container">${KONIRA_ASCII_LIST[idx]}</div>` });
+      }
+
+      // --- progress bar helpers ---
+      function renderCharBar(label, total, filledPct) {
+        const filledCount = Math.round((filledPct / 100) * total);
+        const emptyCount = Math.max(0, total - filledCount);
+        const filled = '█'.repeat(filledCount);
+        const empty = '·'.repeat(emptyCount);
+        return `${escapeHtml(label)}: [<span style="font-family:monospace; font-size:0.78rem; line-height:1; color:#ff2b2b">${filled}</span><span style="font-family:monospace; font-size:0.78rem; line-height:1; color:#999">${empty}</span>] ${Math.round(filledPct)}%`;
+      }
+
+      function showDotProgress(label = 'carregando', total = 32, durationMs = 900) {
+        const safeLabel = escapeHtml(label);
+        const { outEl } = createRow({ prompt: 'konira>', output: `<code class="raw-progress" style="display:block; font-family:monospace; font-size:0.88rem; line-height:1; white-space:pre;">${renderCharBar(safeLabel, total, 0)}</code>` });
+        if (!outEl) return () => { };
+        const codeEl = outEl.querySelector('.raw-progress');
+        const start = performance.now();
+        let raf = null;
+        function step(now) {
+          const t = Math.min(1, (now - start) / Math.max(150, durationMs));
+          const pct = Math.round(t * 100);
+          if (codeEl) codeEl.innerHTML = renderCharBar(safeLabel, total, pct);
+          if (t < 1) raf = requestAnimationFrame(step);
+          else setTimeout(() => realAppendLine({ prompt: 'konira>', text: `<span style="color:#2e8b57; font-weight:700">${escapeHtml(label)} concluído</span>` }), 120);
+        }
+        raf = requestAnimationFrame(step);
+        return function cancel() { if (raf) cancelAnimationFrame(raf); };
+      }
+
+      function showProgress(taskName, durationMs = 700, opts = {}) {
+        const label = taskName || 'download';
+        const total = 16;
+        const { outEl } = createRow({ prompt: 'pip>', output: `<code class="raw-progress" style="display:block; font-family:monospace; font-size:0.88rem; line-height:1; white-space:pre;">${renderCharBar(escapeHtml(label), total, 0)}</code>` });
+        const codeEl = outEl.querySelector('.raw-progress');
+        if (!codeEl) return;
+        const start = performance.now();
+        const totalMs = Math.max(200, durationMs);
+        let rafId = null;
+        function step(now) {
+          const t = Math.min(1, (now - start) / totalMs);
+          const eased = Math.pow(t, 0.9);
+          const pct = Math.round(eased * 100);
+          codeEl.innerHTML = renderCharBar(escapeHtml(label), total, pct);
+          if (t < 1) rafId = requestAnimationFrame(step);
+          else {
+            setTimeout(() => realAppendLine({ prompt: 'pip>', text: `<span style="color:#2e8b57; font-weight:700">${escapeHtml(label)} instalado com sucesso.</span>` }), 120);
+          }
+        }
+        rafId = requestAnimationFrame(step);
+        return function cancel() { if (rafId) cancelAnimationFrame(rafId); };
+      }
+
+      // --- tips / actions / explainers ---
+      const DEVSEC_TIPS = [
+        'Integre segurança desde o início: shift-left é real — segurança como código.',
+        'Automatize SAST e DAST no pipeline CI para feedback rápido.',
+        'Gerencie segredos com cofres (HashiCorp Vault, AWS Secrets Manager).',
+        'Implemente políticas de RBAC e least privilege nos serviços.',
+        'Use SBOM e verificação de dependências para rastrear vulnerabilidades.',
+      ];
+      const DEVSEC_ACTIONS = [
+        'Revisão de código solicitada: foco em segurança (2 revisores).',
+        'Gatilho CI: SAST + testes unitários — bloqueio até OK.',
+        'Política OPA violada: rejeitando manifest do Kubernetes.',
+        'Alerta: dependência com CVE detectada — agendamento de patch.',
+      ];
+      const DEVSEC_EXPLAINERS = [
+        'DevSec significa “Desenvolvimento + Segurança”: é integrar segurança dentro do desenvolvimento, não só depois.',
+        'Pense em DevSec como testes automáticos que procuram problemas de segurança enquanto o código é criado.',
+        'Um cofre de segredos armazena senhas/chaves de forma segura para que ninguém precise colocar valores no código.',
+        'RBAC é dar permissões mínimas: só quem precisa acessar algo deve poder acessar.',
+        'SBOM é a lista de componentes do seu software — útil quando uma biblioteca tem falha e você precisa localizar afetados.',
+      ];
+      function randomTip() { return DEVSEC_TIPS[Math.floor(Math.random() * DEVSEC_TIPS.length)]; }
+      function randomAction() { return DEVSEC_ACTIONS[Math.floor(Math.random() * DEVSEC_ACTIONS.length)]; }
+      function randomExplainer() { return DEVSEC_EXPLAINERS[Math.floor(Math.random() * DEVSEC_EXPLAINERS.length)]; }
+
+      let pendingEvent = null;
+      let eventRaf = null;
+      function flushPendingEvent() {
+        if (!pendingEvent) { eventRaf = null; return; }
+        if (pendingEvent.type === 'move') {
+          const now = Date.now();
+          if (now - lastMouseTipAt >= MOUSE_TIP_THROTTLE_MS) {
+            lastMouseTipAt = now;
+            if (mousePosEl) mousePosEl.textContent = `Mouse: foco no painel — dica exibida`;
+            window.appendLine({ prompt: 'devsec>', text: `<span class="kw-devsec">${randomExplainer()}</span>` });
+          }
+        } else if (pendingEvent.type === 'click') {
+          if (lastActionEl) lastActionEl.textContent = 'Última ação: clique';
+          window.appendLine({ prompt: 'action>', text: randomAction() });
+        }
+        pendingEvent = null;
+        eventRaf = null;
+      }
+      window.addEventListener('mousemove', (e) => {
+        const rect = document.getElementById('bottom-content')?.getBoundingClientRect();
+        if (rect && e.clientY >= rect.top && e.clientY <= rect.bottom && e.clientX >= rect.left && e.clientX <= rect.right) {
+          pendingEvent = { type: 'move' };
+          if (!eventRaf) eventRaf = requestAnimationFrame(flushPendingEvent);
+        }
+      }, { passive: true });
+      document.getElementById('bottom-content')?.addEventListener('click', (ev) => {
+        pendingEvent = { type: 'click' };
+        if (!eventRaf) eventRaf = requestAnimationFrame(flushPendingEvent);
+      });
+
+      let tickTimeoutId = null;
+      let tickCounter = 0;
+
+      function scheduleNextTick() {
+        const delay = Math.floor(Math.random() * (MAX_TICK_CONST - MIN_TICK_CONST + 1)) + MIN_TICK_CONST;
+        tickTimeoutId = setTimeout(() => { tickOnce(); scheduleNextTick(); }, delay);
+      }
+
+      // --- tick logic corrigida e centralizada ---
+      function tickOnce() {
+        tickCounter++;
+        __rowsCreatedThisTick = 0;
+        const r = Math.random();
+
+        // limites cumulativos claros (evita branches "fantasma")
+        let cursor = 0;
+
+        cursor += PROB_EXPLAIN;
+        if (r < cursor) {
+          window.appendLine({ prompt: 'devsec>', text: randomExplainer() });
+          maybeAsciiFallback();
+          return;
+        }
+
+        cursor += PROB_TIP;
+        if (r < cursor) {
+          window.appendLine({ prompt: 'devsec>', text: randomTip() });
+          maybeAsciiFallback();
+          return;
+        }
+
+        cursor += PROB_ACTION;
+        if (r < cursor) {
+          window.appendLine({ prompt: 'action>', text: randomAction() });
+          maybeAsciiFallback();
+          return;
+        }
+
+        cursor += PROB_DOT;
+        if (r < cursor) {
+          if (ENABLE_DOT_PROGRESS) showDotProgress('carregando', 48, 700 + Math.floor(Math.random() * 800));
+          else window.appendLine({ prompt: 'pip>', text: 'carregando (desativado)' });
+          return;
+        }
+
+        cursor += PROB_ASCII;
+        if (r < cursor) {
+          if (ENABLE_ASCII) showKoniraAscii();
+          else window.appendLine({ prompt: 'konira>', text: 'ascii (desativado)' });
+          return;
+        }
+
+        // fallback: poucas mensagens soltas
+        if (Math.random() < 0.02) {
+          window.appendLine({ prompt: 'devsec>', text: randomExplainer() });
+        }
+
+        // chance rara de "instalando-agent"
+        if (ENABLE_PROGRESS && Math.random() < PROB_PROGRESS_AGENT) {
+          showProgress('instalando-agent', 600 + Math.floor(Math.random() * 700), { fast: Math.random() < 0.5 });
+        }
+      }
+
+      // pequena função utilitária: se não criou nada neste tick, ocasionalmente mostra ASCII
+      function maybeAsciiFallback() {
+        if (tickCounter % 8 === 0 && Math.random() < 0.3 && __rowsCreatedThisTick === 0) {
+          if (ENABLE_ASCII) showKoniraAscii();
+        }
+      }
+
+      function startTicker() {
+        if (tickTimeoutId) return;
+        if (ENABLE_ASCII) showKoniraAscii();
+        setTimeout(() => window.appendLine({ prompt: 'devsec>', text: randomExplainer() }), 260);
+        scheduleNextTick();
+      }
+
+      function stopTicker() {
+        if (tickTimeoutId) { clearTimeout(tickTimeoutId); tickTimeoutId = null; }
+      }
+
+      startTicker();
+
+      try { terminal.setAttribute('tabindex', '0'); terminal.focus({ preventScroll: true }); } catch (e) { }
+
+      const mo = new MutationObserver(() => updateScrollButtonVisibility());
+      mo.observe(document.body, { childList: true, subtree: true });
+
+      window.__terminal._teardown = function () {
+        stopTicker();
+        mo.disconnect();
+      };
+
+      window.showDotProgress = showDotProgress;
+      window.showKoniraAscii = showKoniraAscii;
+      window.showProgress = showProgress;
+
+    })();
+  </script>
+
+</body>
+
+</html>
